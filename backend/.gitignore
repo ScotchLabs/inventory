@@ -1,0 +1,15 @@
+__pycache__/
+build/
+dist/
+.venv
+
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+.env
+.env.local
+.env.*.local
+
