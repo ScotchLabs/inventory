@@ -1,5 +1,5 @@
 ## Getting started:
-Please ensure you have `uv` and `npm` installed
+Please ensure you have `uv` and `npm` (use `NVM` in install) installed.  
 Run inside backend
 ```bash
 uv sync
@@ -23,8 +23,8 @@ To run the backend in terminal:
 3. run the following to start server on http://localhost:8000
 ``` bash
     uv run uvicorn app.app:app --reload
-```
-    Remove the reload flag if you'd like to stop the server from refreshing for file changes
+```   
+Remove the reload flag if you'd like to stop the server from refreshing for file changes
 4. To interact, use curl
 ``` bash
     curl -X POST http://localhost:8000/ -H "Content-Type: application/json" -d '{"username":"test"}'
@@ -37,7 +37,7 @@ To look at the frontend:
     npm run dev
 ```
 Type q to exit. 
-Make sure to have the sql running to make sure the two are working together as expected!
+Have the sql running to make sure the two are working together as expected!
 
 ## TODO
 
