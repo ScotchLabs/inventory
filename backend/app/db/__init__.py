@@ -4,6 +4,9 @@ from sqlalchemy import create_engine, Connection
 import os
 from contextvars import ContextVar
 from sqlalchemy.orm import sessionmaker, Session
+from dotenv import load_dotenv
+
+load_dotenv()
 
 engine = create_engine(os.environ.get("DATABASE_URL", ""))
 
