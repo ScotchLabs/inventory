@@ -12,22 +12,13 @@ router = APIRouter(
 )
 
 
-def handle_create_location_from_schema(
-    body: LocationCreateSchema
-) -> Location:
+@router.post("/")
+async def create_location(body: LocationCreateSchema) -> LocationDumpSchema:
     location = db.execute(
         insert(Location).values(
             name=body.name
         ).returning(Location)
     ).scalar_one()
-
-    return location
-
-@router.post("/")
-async def create_location(body: LocationCreateSchema) -> LocationDumpSchema:
-    location = handle_create_location_from_schema(
-        body=body
-    )
     db.commit()
 
     return LocationDumpSchema(

@@ -1,13 +1,13 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class AssetBaseSchema(BaseModel):
     file_id: int
     name: str
     name_verbose: str
-    categories: int
-    sub_categories: int
+    categories: list[int] = Field(default_factory=list)
+    sub_categories: list[int] = Field(default_factory=list)
     quantity: int
     current_location: str
     permanent_location_id: int
