@@ -20,15 +20,26 @@ To run the backend in terminal:
 
 1. cd into backend
 2. make a .env file in backend based on the `DATABASE_URL` found in `.env.example`
-3. run the following to start server on http://localhost:8000
+3. run the following for something
+``` bash
+    docker-compose up -d
+```
+4. run the following to start server on http://localhost:8000
 ``` bash
     uv run uvicorn app.app:app --reload
 ```   
-Remove the reload flag if you'd like to stop the server from refreshing for file changes
-4. To interact, use curl
+   Remove the reload flag if you'd like to stop the server from refreshing for file changes
+
+5. To interact, use curl
 ``` bash
     curl -X POST http://localhost:8000/ -H "Content-Type: application/json" -d '{"username":"test"}'
 ```
+6. to actually view the database, make sure you have `postgresql` installed and then run
+``` bash
+    psql -h localhost -p 5432 -U user -d db
+```
+   the password is `password` lol
+   then also do `exit;` to get out of SQL and stuff
 
 
 ## Frontend:
