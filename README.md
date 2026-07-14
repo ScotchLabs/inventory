@@ -24,16 +24,16 @@ To run the backend in terminal:
 ``` bash
     docker-compose up -d
 ```
-4. run the following to start server on http://localhost:8000
+4. if you made changes since last time (?) then migrate:
+``` bash
+    uv run alembic upgrade head
+```
+
+5. run the following to start server on http://localhost:8000
 ``` bash
     uv run uvicorn app.app:app --reload
 ```   
    Remove the reload flag if you'd like to stop the server from refreshing for file changes
-
-5. if you made changes since last time (?) then migrate:
-``` bash
-    uv run alembic upgrade head
-```
 
 6. To interact, use curl (changing the values in the json)
 >>>>>>> refs/remotes/origin/main
@@ -46,6 +46,8 @@ To run the backend in terminal:
 ```
    the password is `password` lol
    then also do `exit;` to get out of SQL and stuff
+
+8. If new schema is added, run 
 
 
 ## Frontend:
@@ -65,4 +67,4 @@ Have the sql running to make sure the two are working together as expected
 
 - [x] Framwork for frontend/backend
 - [x] @willschremmer implement create/delete asset functions
-- [ ] @mkengland frontend buttons
+- [ ] @mkengland setup frontend public facing

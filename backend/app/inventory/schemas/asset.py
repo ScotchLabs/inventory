@@ -8,7 +8,7 @@ class AssetBaseSchema(BaseModel):
     name_verbose: str
     categories: list[int] = Field(default_factory=list)
     sub_categories: list[int] = Field(default_factory=list)
-    quantity: int
+    quantity: float
     current_location: str
     permanent_location_id: int | None = None
     last_updated: datetime

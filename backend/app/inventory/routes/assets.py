@@ -22,13 +22,19 @@ def asset_to_dump_schema(asset: Asset) -> AssetDumpSchema:
         name_verbose=asset.name_verbose,
         categories=[category.id for category in asset.categories],
         sub_categories=[category.id for category in asset.sub_categories],
-        quantity=asset.quantity,
+        quantity=float(asset.quantity),
         current_location=asset.current_location,
         permanent_location_id=asset.permanent_location_id,
         last_updated=asset.last_updated,
         last_updated_by=asset.last_updated_by,
         notes=asset.notes,
     )
+
+@router.get("/")
+async def get_assets() -> list[AssetDumpSchema]:
+    assets = db.query(Asset).all()
+    return [asset_to_dump_schema(asset) for asset in assets]
+
 
 @router.post("/")
 async def create_asset(body: AssetCreateSchema) -> AssetDumpSchema:

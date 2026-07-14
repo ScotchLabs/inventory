@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.inventory.routes import router as inventory_router
 from app.extensions.all_models import *
 
-app = FastAPI(openapi_url=None)
+app = FastAPI()
 
 origins = [
     "http://localhost:5173",    # Common Vite / Vue port,

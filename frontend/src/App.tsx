@@ -1,14 +1,52 @@
 import { useState } from 'react'
 import { client } from './api/client'
-import { Table } from '@mantine/core'
+import '@mantine/core/styles.css'
+import { Table, MantineProvider } from '@mantine/core'
 import './App.css'
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import type { components } from './api/schema'
 
+import type { components } from './api/schema'
 type Asset = components['schemas']['AssetDumpSchema']
 
 
+function InventoryPublic() {
+  const { data: assets } = client.useQuery('get', '/inventory/assets/')
+  if (!assets) return <div>Loading...</div>
 
+  const rows = assets.map((asset) => (
+    <Table.Tr key={asset.name}>
+      <Table.Td>{asset.name_verbose}</Table.Td>
+      <Table.Td>{asset.quantity}</Table.Td>
+      <Table.Td>{asset.categories}</Table.Td>
+      <Table.Td>{asset.sub_categories}</Table.Td>
+      <Table.Td>{asset.current_location}</Table.Td>
+      <Table.Td>{asset.permanent_location_id}</Table.Td>
+      <Table.Td>{asset.last_updated}</Table.Td>
+      <Table.Td>{asset.last_updated_by}</Table.Td>
+      <Table.Td>{asset.notes}</Table.Td>
+    </Table.Tr>
+  ));
+
+  return (
+    <Table>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th>Item</Table.Th>
+          <Table.Th>Short Description</Table.Th>
+          <Table.Th>Count</Table.Th>
+          <Table.Th>Categories</Table.Th>
+          <Table.Th>Sub-Categories</Table.Th>
+          <Table.Th>Current Location</Table.Th>
+          <Table.Th>Permanent Home</Table.Th>
+          <Table.Th>Last Updated</Table.Th>
+          <Table.Th>Last Updated By</Table.Th>
+          <Table.Th>Notes</Table.Th>
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>{rows}</Table.Tbody>
+    </Table>
+  );
+}
 
 
 function Button({
@@ -34,104 +72,19 @@ function Button({
         Create {username}
         </button>
 }
-function App() {
+
+
+export default function App() {
   const [count, setCount] = useState(0)
 
   const queryClient = new QueryClient();
 
 
   return (
-    <>
-    <QueryClientProvider client={queryClient}>
-    <section id="center">
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <Button username='konst'/>
-        <Button username='madison'/>
-        
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </QueryClientProvider>
-      
-    </>
+    <MantineProvider>
+      <QueryClientProvider client={queryClient}>
+        <InventoryPublic></InventoryPublic>
+      </QueryClientProvider>
+    </MantineProvider>
   )
 }
-
-export default App
