@@ -20,24 +20,28 @@ To run the backend in terminal:
 
 1. cd into backend
 2. make a .env file in backend based on the `DATABASE_URL` found in `.env.example`
-3. run the following to start server on http://localhost:8000
+3. run the following to start server on http://localhost:8000. Remove the reload flag if you'd like to stop the server from refreshing for file changes
 ``` bash
     uv run uvicorn app.app:app --reload
 ```   
-Remove the reload flag if you'd like to stop the server from refreshing for file changes
-4. To interact, use curl
+4. To interact, use curl (changing the values in the json)
 ``` bash
     curl -X POST http://localhost:8000/ -H "Content-Type: application/json" -d '{"username":"test"}'
 ```
 
 
 ## Frontend:
-To look at the frontend:
+To edit with Mantine:
+``` bash
+npm install @mantine/core @mantine/hooks
+```
+
+To look at the frontend (cd into the folder):
 ``` bash
     npm run dev
 ```
 Type q to exit. 
-Have the sql running to make sure the two are working together as expected!
+Have the sql running to make sure the two are working together as expected
 
 ## TODO
 
