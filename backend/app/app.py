@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from app.users.models.user import User
 from sqlalchemy import insert
-from app.db import engine, sync_db_connection_context
+from app.db import engine, sync_db_connection_context, db
 from fastapi.middleware.cors import CORSMiddleware
 from app.inventory.routes import router as inventory_router
 from app.extensions.all_models import *
@@ -42,12 +42,14 @@ class UserDumpSchema(BaseModel):
 
 @app.post("/")
 async def create_user(body: UserCreateSchema) -> UserDumpSchema:
-    with engine.connect() as session:
-        user = session.execute(
-            insert(User).values(
-                username=body.username
-            )
-        )
-        session.commit()
-    return UserDumpSchema(id=1,
-                          username="123")
+    user = db.execute(
+        insert(User).values(
+            username=body.username
+        ).returning(User)
+    ).scalar_one()
+    db.commit()
+
+    return UserDumpSchema(
+        id=user.id,
+        username=user.username,
+    )
