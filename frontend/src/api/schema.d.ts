@@ -4,7 +4,24 @@
  */
 
 export interface paths {
-    "/inventory/": {
+    "/inventory/locations/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Location */
+        post: operations["create_location_inventory_locations__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/inventory/assets/": {
         parameters: {
             query?: never;
             header?: never;
@@ -14,8 +31,25 @@ export interface paths {
         get?: never;
         put?: never;
         /** Create Asset */
-        post: operations["create_asset_inventory__post"];
+        post: operations["create_asset_inventory_assets__post"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/inventory/assets/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Asset */
+        delete: operations["delete_asset_inventory_assets__id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -42,10 +76,85 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AssetCreateSchema */
+        AssetCreateSchema: {
+            /** File Id */
+            file_id?: number | null;
+            /** Name */
+            name: string;
+            /** Name Verbose */
+            name_verbose: string;
+            /** Categories */
+            categories?: number[];
+            /** Sub Categories */
+            sub_categories?: number[];
+            /** Quantity */
+            quantity: number;
+            /** Current Location */
+            current_location: string;
+            /** Permanent Location Id */
+            permanent_location_id?: number | null;
+            /**
+             * Last Updated
+             * Format: date-time
+             */
+            last_updated: string;
+            /** Last Updated By */
+            last_updated_by?: number | null;
+            /** Notes */
+            notes: string;
+        };
+        /** AssetDumpSchema */
+        AssetDumpSchema: {
+            /** File Id */
+            file_id?: number | null;
+            /** Name */
+            name: string;
+            /** Name Verbose */
+            name_verbose: string;
+            /** Categories */
+            categories?: number[];
+            /** Sub Categories */
+            sub_categories?: number[];
+            /** Quantity */
+            quantity: number;
+            /** Current Location */
+            current_location: string;
+            /** Permanent Location Id */
+            permanent_location_id?: number | null;
+            /**
+             * Last Updated
+             * Format: date-time
+             */
+            last_updated: string;
+            /** Last Updated By */
+            last_updated_by?: number | null;
+            /** Notes */
+            notes: string;
+            /** Id */
+            id: number;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** LocationCreateSchema */
+        LocationCreateSchema: {
+            /** Name */
+            name: string;
+        };
+        /** LocationDumpSchema */
+        LocationDumpSchema: {
+            /** Name */
+            name: string;
+            /** Id */
+            id: number;
+        };
+        /** SuccessResponse */
+        SuccessResponse: {
+            /** Success */
+            success: boolean;
         };
         /** UserCreateSchema */
         UserCreateSchema: {
@@ -81,11 +190,93 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    create_asset_inventory__post: {
+    create_location_inventory_locations__post: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LocationCreateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocationDumpSchema"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_asset_inventory_assets__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssetCreateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetDumpSchema"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_asset_inventory_assets__id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -96,7 +287,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["SuccessResponse"];
                 };
             };
             /** @description Not found */
@@ -105,6 +296,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
             };
         };
     };

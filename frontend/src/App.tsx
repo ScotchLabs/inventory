@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import { client } from './api/client'
+import { Table } from '@mantine/core'
 import './App.css'
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import type { components } from './api/schema'
+
+type Asset = components['schemas']['AssetDumpSchema']
 
 
 
