@@ -30,8 +30,9 @@ class Asset(Base):
         primary_key=True
     )
 
-    file_id: Mapped[int] = mapped_column(
-        ForeignKey("files.id")
+    file_id: Mapped[int | None] = mapped_column(
+        ForeignKey("files.id"),
+        nullable=True,
     )
 
     name: Mapped[str] = mapped_column(
@@ -62,16 +63,18 @@ class Asset(Base):
         Text,
     )
 
-    permanent_location_id: Mapped[int] = mapped_column(
+    permanent_location_id: Mapped[int | None] = mapped_column(
         ForeignKey("locations.id"),
+        nullable=True,
     )
 
     last_updated: Mapped[datetime] = mapped_column(
         DateTime,
     )
 
-    last_updated_by: Mapped[int] = mapped_column(
-        ForeignKey("users.id")
+    last_updated_by: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=True,
     )
 
     notes: Mapped[str] = mapped_column(

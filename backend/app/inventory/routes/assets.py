@@ -55,4 +55,12 @@ async def create_asset(body: AssetCreateSchema) -> AssetDumpSchema:
 
 @router.delete("/{id}")
 async def delete_asset(id: int) -> SuccessResponse:
+    asset = db.query(Asset).filter(Asset.id == id).first()
+
+    if asset is None:
+        return SuccessResponse(success=False)
+    
+    db.delete(asset)
+    db.commit()
+
     return SuccessResponse(success=True)

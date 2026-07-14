@@ -30,11 +30,16 @@ To run the backend in terminal:
 ```   
    Remove the reload flag if you'd like to stop the server from refreshing for file changes
 
-5. To interact, use curl
+5. if you made changes since last time (?) then migrate:
+``` bash
+    uv run alembic upgrade head
+```
+
+6. To interact, use curl
 ``` bash
     curl -X POST http://localhost:8000/ -H "Content-Type: application/json" -d '{"username":"test"}'
 ```
-6. to actually view the database, make sure you have `postgresql` installed and then run
+7. to actually view the database, make sure you have `postgresql` installed and then run
 ``` bash
     psql -h localhost -p 5432 -U user -d db
 ```
@@ -53,5 +58,5 @@ Have the sql running to make sure the two are working together as expected!
 ## TODO
 
 - [x] Framwork for frontend/backend
-- [ ] @willschremmer implement create/delete asset functions
+- [x] @willschremmer implement create/delete asset functions
 - [ ] @mkengland frontend buttons
