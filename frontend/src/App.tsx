@@ -75,8 +75,6 @@ function Button({
 
 
 export default function App() {
-  const [count, setCount] = useState(0)
-
   const queryClient = new QueryClient();
 
 

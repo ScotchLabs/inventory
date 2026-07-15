@@ -47,7 +47,10 @@ To run the backend in terminal:
    the password is `password` lol
    then also do `exit;` to get out of SQL and stuff
 
-8. If new schema is added, run 
+8. If new schema is added, run the backend, cd into frontend, and run 
+``` bash 
+npx openapi-typescript ../backend/dist/openapi.json -o ./src/api/schema.d.ts
+```
 
 
 ## Frontend:
