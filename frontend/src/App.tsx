@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { client } from './api/client'
 import '@mantine/core/styles.css'
-import { Table, MantineProvider, Stack, Button } from '@mantine/core'
+import { Table, MantineProvider, Stack, Button, Anchor, Container, Group } from '@mantine/core'
+import classes from './FooterSimple.module.css';
 import './App.css'
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import sns_logo from "./assets/sns_logo.png"
@@ -53,6 +54,35 @@ function InventoryPublic() {
   );
 }
 
+const links = [
+  { link: '#', label: 'Report Issue' },
+  { link: '#', label: 'Request Item' },
+  { link: '#', label: "Scotch'n'Soda Home" },
+];
+
+export function FooterSimple() {
+  const items = links.map((link) => (
+    <Anchor<'a'>
+      c="dimmed"
+      key={link.label}
+      href={link.link}
+      onClick={(event) => event.preventDefault()}
+      size="sm"
+    >
+      {link.label}
+    </Anchor>
+  ));
+
+  return (
+    <footer className={classes.footer}>
+      <Container className={classes.inner}>
+        <p style = {{ fontSize: '12px' }}> Built and mainted by Will & Madison</p>
+        <Group className={classes.links}>{items}</Group>
+      </Container>
+    </footer>
+  );
+}
+
 function Admin({
   username
 }: {
@@ -85,19 +115,19 @@ export default function App() {
   return (
     <MantineProvider>
       <QueryClientProvider client={queryClient}>
-        <Stack>
-          <div style = {{ display: "flex", 
-                          alignItems: "center", 
-                          marginTop: '20px',
+        <Stack style={{ flex: 1 }}>
+          <div style = {{ display: "flex",
+                          alignItems: "center",
                           width: "90%",
-                          margin: "0 auto",
+                          marginRight: "auto",
+                          marginLeft: "auto",
+                          marginTop: '30px',
                           gap: "50px" }}>
               <img src = {sns_logo} alt = "logo" width="150">
               </img>
 
               <div>
                 <h2 style = {{ color: "black", fontSize: '32px'}}> Scotch'n'Soda Shop Inventory</h2>
-                <p style = {{ fontSize: '12px' }}> Built and mainted by Will & Madison</p>
               </div>
 
               <div style={{ marginLeft: "auto" }}>
@@ -111,17 +141,18 @@ export default function App() {
               </div>
           </div>
 
-          <div style = {{ display: "flex", 
-                          alignItems: "center", 
-                          marginTop: '40px',
+          <div style = {{ display: "flex",
+                          alignItems: "center",
                           width: "80%",
-                          margin: "0 auto",
+                          marginRight: "auto",
+                          marginLeft: "auto",
+                          marginTop: '70px',
                           gap: "30px" }}>
             <InventoryPublic></InventoryPublic>
           </div>
+
         </Stack>
-
-
+        <FooterSimple></FooterSimple>
       </QueryClientProvider>
     </MantineProvider>
   )
