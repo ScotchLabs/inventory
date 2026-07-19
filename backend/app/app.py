@@ -5,6 +5,7 @@ from sqlalchemy import insert
 from app.db import engine, sync_db_connection_context, db
 from fastapi.middleware.cors import CORSMiddleware
 from app.inventory.routes import router as inventory_router
+from app.files.routes import router as files_router
 from app.extensions.all_models import *
 
 app = FastAPI()
@@ -31,6 +32,7 @@ async def db_session_middleware(request: Request, call_next):
         return response
 
 app.include_router(inventory_router)
+app.include_router(files_router)
 
 
 class UserCreateSchema(BaseModel):
