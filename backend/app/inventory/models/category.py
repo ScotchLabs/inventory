@@ -21,15 +21,3 @@ class Category(Base):
     classification: Mapped[str] = mapped_column(
         Text,
     )
-
-    assets: Mapped[list["Asset"]] = relationship(
-        secondary="asset_categories",
-        back_populates="categories",
-        lazy="selectin",
-    )
-
-    sub_assets: Mapped[list["Asset"]] = relationship(
-        secondary="asset_sub_categories",
-        back_populates="sub_categories",
-        lazy="selectin",
-    )

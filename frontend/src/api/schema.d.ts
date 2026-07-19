@@ -21,7 +21,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/inventory/assets/": {
+    "/inventory/asset/": {
         parameters: {
             query?: never;
             header?: never;
@@ -29,17 +29,17 @@ export interface paths {
             cookie?: never;
         };
         /** Get Assets */
-        get: operations["get_assets_inventory_assets__get"];
+        get: operations["get_assets_inventory_asset__get"];
         put?: never;
         /** Create Asset */
-        post: operations["create_asset_inventory_assets__post"];
+        post: operations["create_asset_inventory_asset__post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/inventory/assets/{id}": {
+    "/inventory/asset/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -50,7 +50,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** Delete Asset */
-        delete: operations["delete_asset_inventory_assets__id__delete"];
+        delete: operations["delete_asset_inventory_asset__id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -139,6 +139,11 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** ListResponseSchema[AssetDumpSchema] */
+        ListResponseSchema_AssetDumpSchema_: {
+            /** Elements */
+            elements: components["schemas"]["AssetDumpSchema"][];
         };
         /** LocationCreateSchema */
         LocationCreateSchema: {
@@ -231,9 +236,13 @@ export interface operations {
             };
         };
     };
-    get_assets_inventory_assets__get: {
+    get_assets_inventory_asset__get: {
         parameters: {
-            query?: never;
+            query?: {
+                search?: string | null;
+                categories?: number[] | null;
+                sub_categories?: number[] | null;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -246,7 +255,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AssetDumpSchema"][];
+                    "application/json": components["schemas"]["ListResponseSchema_AssetDumpSchema_"];
                 };
             };
             /** @description Not found */
@@ -256,9 +265,18 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
     };
-    create_asset_inventory_assets__post: {
+    create_asset_inventory_asset__post: {
         parameters: {
             query?: never;
             header?: never;
@@ -298,7 +316,7 @@ export interface operations {
             };
         };
     };
-    delete_asset_inventory_assets__id__delete: {
+    delete_asset_inventory_asset__id__delete: {
         parameters: {
             query?: never;
             header?: never;

@@ -8,19 +8,22 @@ from datetime import datetime
 if TYPE_CHECKING:
     from app.inventory.models.category import Category
 
-asset_categories = Table(
-    "asset_categories",
-    Base.metadata,
-    Column("asset_id", Integer, ForeignKey("assets.id"), primary_key=True),
-    Column("category_id", Integer, ForeignKey("categories.id"), primary_key=True),
-)
+class AssetCategoryMap(Base):
+    __tablename__ = "asset_categories"
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True
+    )
+    asset_id: Mapped[int] = mapped_column(
+        ForeignKey("assets.id")
+    ) 
+    category_id: Mapped[int] = mapped_column(
+        ForeignKey("categories.id")
+    ) 
+    type: Mapped[str] = mapped_column(
+        Text
+    )
 
-asset_sub_categories = Table(
-    "asset_sub_categories",
-    Base.metadata,
-    Column("asset_id", Integer, ForeignKey("assets.id"), primary_key=True),
-    Column("category_id", Integer, ForeignKey("categories.id"), primary_key=True),
-)
 
 class Asset(Base):
     __tablename__ = "assets"
@@ -41,18 +44,6 @@ class Asset(Base):
 
     name_verbose: Mapped[str] = mapped_column(
         Text,
-    )
-
-    categories: Mapped[list["Category"]] = relationship(
-        secondary=asset_categories,
-        back_populates="assets",
-        lazy="selectin",
-    )
-
-    sub_categories: Mapped[list["Category"]] = relationship(
-        secondary=asset_sub_categories,
-        back_populates="sub_assets",
-        lazy="selectin",
     )
 
     quantity: Mapped[Decimal] = mapped_column(

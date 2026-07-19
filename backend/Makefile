@@ -10,3 +10,6 @@ db-upgrade:
 spec:
 	mkdir -p dist/
 	python3 -m app.scripts.save_openapi
+
+generate-fixtures:
+	python3 -m app.scripts.fixtures

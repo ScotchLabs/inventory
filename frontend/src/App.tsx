@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { client } from './api/client'
 import '@mantine/core/styles.css'
-import { Table, MantineProvider, Stack, Button, Anchor, Container, Group } from '@mantine/core'
+import { Table, MantineProvider, Stack, Button, Anchor, Container, Group, TextInput } from '@mantine/core'
+import { IconSearch } from '@tabler/icons-react';
 import classes from './FooterSimple.module.css';
 import './App.css'
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
@@ -12,11 +13,15 @@ type Asset = components['schemas']['AssetDumpSchema']
 
 
 function InventoryPublic() {
-  const { data: assets } = client.useQuery('get', '/inventory/assets/')
+  const [search, setSearch] = useState('')
+  const { data: assets } = client.useQuery('get', `/inventory/asset/?search=${search}`)
+  console.log(search)
   if (!assets) return <div>Loading...</div>
 
-  const rows = assets.map((asset) => (
-    <Table.Tr key={asset.name}>
+
+  const rows = assets.elements.map((asset) => (
+    <Table.Tr key={asset.id}>
+      <Table.Td>{asset.name}</Table.Td>
       <Table.Td>{asset.name_verbose}</Table.Td>
       <Table.Td>{asset.quantity}</Table.Td>
       <Table.Td>{asset.categories}</Table.Td>
@@ -32,7 +37,14 @@ function InventoryPublic() {
   return (
     <div style={{ display: 'inline-block', maxWidth: '100%' }}>
       <Table.ScrollContainer minWidth={500} maxHeight={300}>
-        <Table withTableBorder highlightOnHover stickyHeader stickyHeaderOffset={60}>
+        <TextInput
+          placeholder="Search by any field"
+          mb="md"
+          leftSection={<IconSearch size={16} stroke={1.5} />}
+          value={search}
+          onChange={(event)=>setSearch(event.currentTarget.value)}
+        /> 
+        <Table withTableBorder highlightOnHover stickyHeader stickyHeaderOffset={60} >
           <Table.Thead>
             <Table.Tr>
               <Table.Th>Item</Table.Th>
@@ -47,7 +59,7 @@ function InventoryPublic() {
               <Table.Th>Notes</Table.Th>
             </Table.Tr>
           </Table.Thead>
-          <Table.Tbody>{rows}</Table.Tbody>
+          <Table.Tbody style = {{ fontSize: "13px"}}>{rows}</Table.Tbody>
         </Table>
       </Table.ScrollContainer>
     </div>
@@ -143,7 +155,7 @@ export default function App() {
 
           <div style = {{ display: "flex",
                           alignItems: "center",
-                          width: "80%",
+                          width: "95%",
                           marginRight: "auto",
                           marginLeft: "auto",
                           marginTop: '70px',
