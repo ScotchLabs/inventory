@@ -56,6 +56,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/file/upload/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload Single File */
+        post: operations["upload_single_file_file_upload__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/": {
         parameters: {
             query?: never;
@@ -132,6 +149,16 @@ export interface components {
             last_updated_by?: number | null;
             /** Notes */
             notes: string;
+            /** Id */
+            id: number;
+        };
+        /** Body_upload_single_file_file_upload__post */
+        Body_upload_single_file_file_upload__post: {
+            /** File */
+            file: string;
+        };
+        /** FileDumpSchema */
+        FileDumpSchema: {
             /** Id */
             id: number;
         };
@@ -334,6 +361,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SuccessResponse"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_single_file_file_upload__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_single_file_file_upload__post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileDumpSchema"];
                 };
             };
             /** @description Not found */

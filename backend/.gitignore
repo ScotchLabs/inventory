@@ -3,6 +3,10 @@ build/
 dist/
 .venv
 
+# for localdev
+/localdata/*
+!localdata/
+
 .vscode/
 *.swp
 *.swo

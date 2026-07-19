@@ -1,20 +1,69 @@
 import { useState } from 'react'
 import { client } from './api/client'
 import '@mantine/core/styles.css'
-import { Table, MantineProvider, Stack, Button, Anchor, Container, Group, TextInput } from '@mantine/core'
-import { IconSearch } from '@tabler/icons-react';
+import '@mantine/dropzone/styles.css'
+import { Table, MantineProvider, Stack, Button, Anchor, Container, Group, Text, TextInput } from '@mantine/core'
+import { IconSearch, IconUpload, IconX, IconPhoto } from '@tabler/icons-react';
 import classes from './FooterSimple.module.css';
 import './App.css'
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import sns_logo from "./assets/sns_logo.png"
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 
 import type { components } from './api/schema'
 type Asset = components['schemas']['AssetDumpSchema']
 
 
+type SatisDropzoneProps = {
+}
+
+function SatisDropzone({...props}: SatisDropzoneProps) {
+    const {mutate} = client.useMutation('post', '/file/upload/')
+    return (
+    <Dropzone
+      onDrop={async (files) => {
+          const blob = new Blob([await files[0].bytes()], { type: files[0].type });
+      
+          const formData = new FormData();
+          formData.append('file', blob, files[0].name);
+          mutate({ body: formData})
+
+          console.log('accepted files', files)
+      }
+
+      }
+      onReject={(files) => console.log('rejected files', files)}
+      maxSize={5 * 1024 ** 2}
+      accept={IMAGE_MIME_TYPE}
+      {...props}
+    >
+      <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+        <Dropzone.Accept>
+          <IconUpload size={52} color="var(--mantine-color-blue-6)" />
+        </Dropzone.Accept>
+        <Dropzone.Reject>
+          <IconX size={52} color="var(--mantine-color-red-6)" />
+        </Dropzone.Reject>
+        <Dropzone.Idle>
+          <IconPhoto size={52} color="var(--mantine-color-dimmed)" />
+        </Dropzone.Idle>
+
+        <div>
+          <Text size="xl" inline>
+            Drag images here or click to select files
+          </Text>
+          <Text size="sm" c="dimmed" inline mt={7}>
+            Attach as many files as you like, each file should not exceed 5mb
+          </Text>
+        </div>
+      </Group>
+    </Dropzone>
+  );
+}
+
 function InventoryPublic() {
   const [search, setSearch] = useState('')
-  const { data: assets } = client.useQuery('get', `/inventory/asset/?search=${search}`)
+  const { data: assets } = client.useQuery('get', '/inventory/asset/?search=')
   console.log(search)
   if (!assets) return <div>Loading...</div>
 
@@ -162,6 +211,8 @@ export default function App() {
                           gap: "30px" }}>
             <InventoryPublic></InventoryPublic>
           </div>
+          <SatisDropzone/>
+
 
         </Stack>
         <FooterSimple></FooterSimple>
