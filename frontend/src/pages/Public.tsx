@@ -1,25 +1,28 @@
-import { Fragment, Suspense, useState } from 'react'
-import { client } from '../api/client'
-import { Link } from 'react-router-dom';
-import '@mantine/core/styles.css'
-import { Table, MantineProvider, Stack, Button, Anchor, Container, Group, TextInput, Loader } from '@mantine/core'
-import { IconSearch } from '@tabler/icons-react';
-import classes from './FooterSimple.module.css';
-import './Public.css'
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import sns_logo from "../assets/sns_logo.png"
+import { Fragment, useState } from "react";
+import { client } from "../api/client";
+import "@mantine/core/styles.css";
+import {
+  Table,
+  Stack,
+  Button,
+  Anchor,
+  Container,
+  Group,
+  TextInput,
+} from "@mantine/core";
+import { IconSearch } from "@tabler/icons-react";
+import classes from "./FooterSimple.module.css";
+import "./Public.css";
+import sns_logo from "../assets/sns_logo.png";
 
-import type { components } from '../api/schema'
-import { useDebouncedValue } from '@mantine/hooks';
-type Asset = components['schemas']['AssetDumpSchema']
-
+import { useDebouncedValue } from "@mantine/hooks";
 
 function InventoryPublic() {
-  const [search, setSearch] = useState('')
-  const [debouncedSearch, _1, _2] = useDebouncedValue(search, 300)
-  const { data: assets } = client.useQuery('post', '/inventory/asset/list', {
-    body: {search: debouncedSearch}
-  })
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search, 300)[0];
+  const { data: assets } = client.useQuery("post", "/inventory/asset/list", {
+    body: { search: debouncedSearch },
+  });
 
   const rows = (assets?.elements ?? []).map((asset) => (
     <Table.Tr key={asset.id}>
@@ -37,15 +40,20 @@ function InventoryPublic() {
   ));
 
   return (
-    <div style={{ display: 'inline-block', maxWidth: '100%' }}>
+    <div style={{ display: "inline-block", maxWidth: "100%" }}>
       <Table.ScrollContainer minWidth={500} maxHeight={300}>
         <TextInput
           placeholder="Search by any field"
           mb="md"
           leftSection={<IconSearch size={16} stroke={1.5} />}
-          onChange={(event)=>setSearch(event.currentTarget.value)}
-        /> 
-        <Table withTableBorder highlightOnHover stickyHeader stickyHeaderOffset={60} >
+          onChange={(event) => setSearch(event.currentTarget.value)}
+        />
+        <Table
+          withTableBorder
+          highlightOnHover
+          stickyHeader
+          stickyHeaderOffset={60}
+        >
           <Table.Thead>
             <Table.Tr>
               <Table.Th>Item</Table.Th>
@@ -60,8 +68,7 @@ function InventoryPublic() {
               <Table.Th>Notes</Table.Th>
             </Table.Tr>
           </Table.Thead>
-          <Table.Tbody style = {{ fontSize: "13px"}}>{rows}</Table.Tbody>
-        
+          <Table.Tbody style={{ fontSize: "13px" }}>{rows}</Table.Tbody>
         </Table>
       </Table.ScrollContainer>
     </div>
@@ -69,13 +76,13 @@ function InventoryPublic() {
 }
 
 const links = [
-  { link: '#', label: 'Request Item' },
-  { link: '#', label: "Scotch'n'Soda Home" },
+  { link: "#", label: "Request Item" },
+  { link: "#", label: "Scotch'n'Soda Home" },
 ];
 
 export function FooterSimple() {
   const items = links.map((link) => (
-    <Anchor<'a'>
+    <Anchor<"a">
       c="dimmed"
       key={link.label}
       href={link.link}
@@ -89,7 +96,10 @@ export function FooterSimple() {
   return (
     <footer className={classes.footer}>
       <Container className={classes.inner}>
-        <p style = {{ fontSize: '12px' }}> To report bugs reach out to Will & Madison</p>
+        <p style={{ fontSize: "12px" }}>
+          {" "}
+          To report bugs reach out to Will & Madison
+        </p>
         <Group className={classes.links}>{items}</Group>
       </Container>
     </footer>
@@ -97,64 +107,70 @@ export function FooterSimple() {
 }
 
 function Admin() {
-    const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:8000/users/auth/google/login';
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8000/users/auth/google/login";
   };
 
-  return (
-      <Button onClick={handleGoogleLogin}>
-        Sign in with Google
-      </Button>
-  );
+  return <Button onClick={handleGoogleLogin}>Sign in with Google</Button>;
 }
-
 
 export default function Public() {
   return (
     <Fragment>
+      <Stack style={{ flex: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            width: "90%",
+            marginRight: "auto",
+            marginLeft: "auto",
+            marginTop: "30px",
+            gap: "50px",
+          }}
+        >
+          <img src={sns_logo} alt="logo" width="150"></img>
 
-        <Stack style={{ flex: 1 }}>
-          <div style = {{ display: "flex",
-                          alignItems: "center",
-                          width: "90%",
-                          marginRight: "auto",
-                          marginLeft: "auto",
-                          marginTop: '30px',
-                          gap: "50px" }}>
-              <img src = {sns_logo} alt = "logo" width="150">
-              </img>
-
-              <div>
-                <h2 style = {{ color: "black", fontSize: '32px'}}> Scotch'n'Soda Shop Inventory</h2>
-              </div>
-
-              <div style={{ marginLeft: "auto" }}>
-                <Admin></Admin>
-                <p style={{ fontSize: '12px', 
-                            maxWidth: '300px', 
-                            marginTop: '10px',
-                            minWidth: 0 }}>
-                 If you are a TAH looking to add or remove an item, please log in as admin.
-                </p>
-              </div>
+          <div>
+            <h2 style={{ color: "black", fontSize: "32px" }}>
+              {" "}
+              Scotch'n'Soda Shop Inventory
+            </h2>
           </div>
 
-          <div style = {{ display: "flex",
-                          alignItems: "center",
-                          width: "95%",
-                          marginRight: "auto",
-                          marginLeft: "auto",
-                          marginTop: '70px',
-                          gap: "30px" }}>
-            <InventoryPublic></InventoryPublic>
+          <div style={{ marginLeft: "auto" }}>
+            <Admin></Admin>
+            <p
+              style={{
+                fontSize: "12px",
+                maxWidth: "300px",
+                marginTop: "10px",
+                minWidth: 0,
+              }}
+            >
+              If you are a TAH looking to add or remove an item, please log in
+              as admin.
+            </p>
           </div>
+        </div>
 
-        </Stack>
-        <FooterSimple></FooterSimple>
-        </Fragment>
-  )
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            width: "95%",
+            marginRight: "auto",
+            marginLeft: "auto",
+            marginTop: "70px",
+            gap: "30px",
+          }}
+        >
+          <InventoryPublic></InventoryPublic>
+        </div>
+      </Stack>
+      <FooterSimple></FooterSimple>
+    </Fragment>
+  );
 }
 
-export const PublicTable = () => (
-    <Public></Public>
-)
+export const PublicTable = () => <Public></Public>;

@@ -1,4 +1,3 @@
-
 from datetime import datetime
 
 from sqlalchemy import DateTime, ForeignKey, Integer, Text
@@ -17,21 +16,20 @@ class Token(Base):
     )
 
     public: Mapped[str] = mapped_column(
-       Text,
-       index=True,
-       nullable=False,
+        Text,
+        index=True,
+        nullable=False,
     )
 
     token: Mapped[str] = mapped_column(
-       Text,
-       index=True,
-       nullable=False,
+        Text,
+        index=True,
+        nullable=False,
     )
 
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id"),
         nullable=False,
-
     )
     expires_at: Mapped[datetime] = mapped_column(
         DateTime(),

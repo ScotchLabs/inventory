@@ -20,7 +20,7 @@ class AssetSearchParems(BaseModel):
     search: str | None = None
     categories: list[int] | None = None
     sub_categories: list[int] | None = None
-    
+
 
 class AssetCreateSchema(AssetBaseSchema):
     pass
@@ -30,5 +30,5 @@ class AssetDumpSchema(AssetBaseSchema):
     id: int
 
 
-class ListResponseSchema[T:BaseModel](BaseModel):
+class ListResponseSchema[T: BaseModel](BaseModel):
     elements: list[T]

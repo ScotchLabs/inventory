@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Query
 from typing import Annotated
 from pydantic import BaseModel
-from app.inventory.schemas.asset import AssetCreateSchema, AssetDumpSchema, ListResponseSchema, AssetSearchParems
+from app.inventory.schemas.asset import (
+    AssetCreateSchema,
+    AssetDumpSchema,
+    ListResponseSchema,
+    AssetSearchParems,
+)
 from app.inventory.models.asset import Asset, AssetCategoryMap
 from app.inventory.models.category import Category
 from app.db import db
@@ -13,8 +18,10 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 class SuccessResponse(BaseModel):
     success: bool
+
 
 def asset_to_dump_schema(asset: Asset) -> AssetDumpSchema:
     return AssetDumpSchema(
@@ -32,15 +39,17 @@ def asset_to_dump_schema(asset: Asset) -> AssetDumpSchema:
         notes=asset.notes,
     )
 
+
 @router.post("/list")
 def list_assets(body: AssetSearchParems) -> ListResponseSchema[AssetDumpSchema]:
     query = select(Asset)
     if body.search is not None:
-        query = query.where(Asset.name.ilike(f'{body.search}%'))
+        query = query.where(Asset.name.ilike(f"{body.search}%"))
 
     assets = db.execute(query).scalars().all()
-    return ListResponseSchema(elements = [asset_to_dump_schema(asset) for asset in assets])
-
+    return ListResponseSchema(
+        elements=[asset_to_dump_schema(asset) for asset in assets]
+    )
 
 
 @router.post("/create")
@@ -59,13 +68,28 @@ def create_asset(body: AssetCreateSchema) -> AssetDumpSchema:
 
     db.add(asset)
     db.flush()
-    db.execute(insert(AssetCategoryMap).values([{"asset_id": asset.id, "category_id": category, "type": "PRIMARY"} for category in body.categories]))
-    db.execute(insert(AssetCategoryMap).values([{"asset_id": asset.id, "category_id": category, "type": "SECONDARY"} for category in body.sub_categories]))
+    db.execute(
+        insert(AssetCategoryMap).values(
+            [
+                {"asset_id": asset.id, "category_id": category, "type": "PRIMARY"}
+                for category in body.categories
+            ]
+        )
+    )
+    db.execute(
+        insert(AssetCategoryMap).values(
+            [
+                {"asset_id": asset.id, "category_id": category, "type": "SECONDARY"}
+                for category in body.sub_categories
+            ]
+        )
+    )
 
     db.commit()
     db.refresh(asset)
 
     return asset_to_dump_schema(asset)
+
 
 @router.delete("/{id}")
 def delete_asset(id: int) -> SuccessResponse:
@@ -73,7 +97,7 @@ def delete_asset(id: int) -> SuccessResponse:
 
     if asset is None:
         return SuccessResponse(success=False)
-    
+
     db.delete(asset)
     db.commit()
 

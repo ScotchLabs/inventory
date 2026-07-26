@@ -21,9 +21,7 @@ from app.utils.environment import sns_environment, SNSDeploymentType
 
 app = FastAPI()
 
-origins = [
-   sns_environment.web_root_url
-]
+origins = [sns_environment.web_root_url]
 
 app.add_middleware(
     CORSMiddleware,
@@ -48,6 +46,7 @@ async def current_request_middleware(request: Request, call_next):
         response = await call_next(request)
         return response
 
+
 @app.middleware("http")
 async def security_headers_middleware(request: Request, call_next):
     response = await call_next(request)
@@ -58,18 +57,24 @@ async def security_headers_middleware(request: Request, call_next):
     response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
 
     if sns_environment.deployment_type != SNSDeploymentType.LOCALDEV:
-        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Strict-Transport-Security"] = (
+            "max-age=31536000; includeSubDomains"
+        )
 
     return response
 
+
 @app.exception_handler(NotAuthorizedException)
-async def authorization_exception_handler(request: Request, exc: NotAuthorizedException):
+async def authorization_exception_handler(
+    request: Request, exc: NotAuthorizedException
+):
     response = JSONResponse(
         status_code=401,
         content={"detail": "Session expired or invalid"},
     )
     response.delete_cookie(key="public_token")
     return response
+
 
 app.include_router(inventory_router)
 app.include_router(users_router)

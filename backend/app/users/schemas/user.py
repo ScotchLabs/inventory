@@ -1,6 +1,3 @@
-
-
-
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -9,6 +6,7 @@ from pydantic import BaseModel
 class UserDumpSchema(BaseModel):
     id: int
     email: str
+
 
 class UserDumpSchemaWithSessionInfo(UserDumpSchema):
     started_at: datetime

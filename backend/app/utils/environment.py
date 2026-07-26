@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass
 from enum import StrEnum
 import os
@@ -6,6 +5,7 @@ import os
 
 class SNSDeploymentType(StrEnum):
     LOCALDEV = "LOCALDEV"
+
 
 @dataclass
 class SNSEnvironment:
@@ -16,11 +16,12 @@ class SNSEnvironment:
     fastapi_session_secret: str
     deployment_type: SNSDeploymentType
 
+
 sns_environment = SNSEnvironment(
     google_oauth_client_id=os.environ["GOOGLE_OAUTH_CLIENT_ID"],
     google_oauth_client_secret=os.environ["GOOGLE_OAUTH_CLIENT_SECRET"],
     web_root_url=os.environ["WEB_ROOT_URL"],
     api_root_url=os.environ["API_ROOT_URL"],
     fastapi_session_secret=os.environ["FASTAPI_SESSION_SECRET"],
-    deployment_type=SNSDeploymentType(os.environ["DEPLOYMENT_TYPE"])
+    deployment_type=SNSDeploymentType(os.environ["DEPLOYMENT_TYPE"]),
 )
