@@ -20,6 +20,6 @@ format:
 check:
 	ruff check
 
-lint-fix:
+fix:
 	ruff format .
 	ruff check --fix
