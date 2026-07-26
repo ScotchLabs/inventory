@@ -21,18 +21,34 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/inventory/asset/": {
+    "/inventory/asset/list": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Assets */
-        get: operations["get_assets_inventory_asset__get"];
+        get?: never;
+        put?: never;
+        /** List Assets */
+        post: operations["list_assets_inventory_asset_list_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/inventory/asset/create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
         put?: never;
         /** Create Asset */
-        post: operations["create_asset_inventory_asset__post"];
+        post: operations["create_asset_inventory_asset_create_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -56,17 +72,51 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/": {
+    "/users/auth/google/callback": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Callback */
+        get: operations["callback_users_auth_google_callback_get"];
         put?: never;
-        /** Create User */
-        post: operations["create_user__post"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/auth/google/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Login */
+        get: operations["login_users_auth_google_login_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/users/current-session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Current Session Get */
+        get: operations["current_session_get_users_users_current_session_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -135,6 +185,19 @@ export interface components {
             /** Id */
             id: number;
         };
+        /** AssetSearchParems */
+        AssetSearchParems: {
+            /** Search */
+            search?: string | null;
+            /** Categories */
+            categories?: number[] | null;
+            /** Sub Categories */
+            sub_categories?: number[] | null;
+        };
+        /** CurrentSessionDumpSchema */
+        CurrentSessionDumpSchema: {
+            user?: components["schemas"]["UserDumpSchemaWithSessionInfo"] | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -162,17 +225,22 @@ export interface components {
             /** Success */
             success: boolean;
         };
-        /** UserCreateSchema */
-        UserCreateSchema: {
-            /** Username */
-            username: string;
-        };
-        /** UserDumpSchema */
-        UserDumpSchema: {
+        /** UserDumpSchemaWithSessionInfo */
+        UserDumpSchemaWithSessionInfo: {
             /** Id */
             id: number;
-            /** Username */
-            username: string;
+            /** Email */
+            email: string;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -236,18 +304,18 @@ export interface operations {
             };
         };
     };
-    get_assets_inventory_asset__get: {
+    list_assets_inventory_asset_list_post: {
         parameters: {
-            query?: {
-                search?: string | null;
-                categories?: number[] | null;
-                sub_categories?: number[] | null;
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssetSearchParems"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -276,7 +344,7 @@ export interface operations {
             };
         };
     };
-    create_asset_inventory_asset__post: {
+    create_asset_inventory_asset_create_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -354,18 +422,14 @@ export interface operations {
             };
         };
     };
-    create_user__post: {
+    callback_users_auth_google_callback_get: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UserCreateSchema"];
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
@@ -373,17 +437,69 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserDumpSchema"];
+                    "application/json": unknown;
                 };
             };
-            /** @description Validation Error */
-            422: {
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    login_users_auth_google_login_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": unknown;
                 };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    current_session_get_users_users_current_session_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CurrentSessionDumpSchema"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

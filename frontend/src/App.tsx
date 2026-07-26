@@ -1,171 +1,55 @@
-import { useState } from 'react'
-import { client } from './api/client'
-import '@mantine/core/styles.css'
-import { Table, MantineProvider, Stack, Button, Anchor, Container, Group, TextInput } from '@mantine/core'
-import { IconSearch } from '@tabler/icons-react';
-import classes from './FooterSimple.module.css';
-import './App.css'
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import sns_logo from "./assets/sns_logo.png"
+import { createBrowserRouter, Outlet, RouterProvider, useNavigate } from 'react-router'
+import { PublicTable } from './pages/Public'
+import { MantineProvider, Skeleton, Text } from '@mantine/core';
+import { client } from './api/client';
+import { Suspense, useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import type { components } from './api/schema'
-type Asset = components['schemas']['AssetDumpSchema']
+const queryClient = new QueryClient();
 
-
-function InventoryPublic() {
-  const [search, setSearch] = useState('')
-  const { data: assets } = client.useQuery('get', `/inventory/asset/?search=${search}`)
-  console.log(search)
-  if (!assets) return <div>Loading...</div>
-
-
-  const rows = assets.elements.map((asset) => (
-    <Table.Tr key={asset.id}>
-      <Table.Td>{asset.name}</Table.Td>
-      <Table.Td>{asset.name_verbose}</Table.Td>
-      <Table.Td>{asset.quantity}</Table.Td>
-      <Table.Td>{asset.categories}</Table.Td>
-      <Table.Td>{asset.sub_categories}</Table.Td>
-      <Table.Td>{asset.current_location}</Table.Td>
-      <Table.Td>{asset.permanent_location_id}</Table.Td>
-      <Table.Td>{asset.last_updated}</Table.Td>
-      <Table.Td>{asset.last_updated_by}</Table.Td>
-      <Table.Td>{asset.notes}</Table.Td>
-    </Table.Tr>
-  ));
-
-  return (
-    <div style={{ display: 'inline-block', maxWidth: '100%' }}>
-      <Table.ScrollContainer minWidth={500} maxHeight={300}>
-        <TextInput
-          placeholder="Search by any field"
-          mb="md"
-          leftSection={<IconSearch size={16} stroke={1.5} />}
-          value={search}
-          onChange={(event)=>setSearch(event.currentTarget.value)}
-        /> 
-        <Table withTableBorder highlightOnHover stickyHeader stickyHeaderOffset={60} >
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Item</Table.Th>
-              <Table.Th>Description</Table.Th>
-              <Table.Th>Count</Table.Th>
-              <Table.Th>Categories</Table.Th>
-              <Table.Th>Sub-Categories</Table.Th>
-              <Table.Th>Current Location</Table.Th>
-              <Table.Th>Permanent Home</Table.Th>
-              <Table.Th>Last Updated</Table.Th>
-              <Table.Th>Last Updated By</Table.Th>
-              <Table.Th>Notes</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody style = {{ fontSize: "13px"}}>{rows}</Table.Tbody>
-        </Table>
-      </Table.ScrollContainer>
-    </div>
-  );
+function BaseProvider() {
+  return <MantineProvider>
+          <QueryClientProvider client={queryClient}>
+                <Outlet/>
+          </QueryClientProvider>
+        </MantineProvider>
+}
+function EnsureLogin() {
+  const { data: session} = client.useSuspenseQuery('get', '/users/users/current-session')
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!session.user){
+      navigate("/")
+    }
+    }, [session])
+    return <></>
 }
 
-const links = [
-  { link: '#', label: 'Report Issue' },
-  { link: '#', label: 'Request Item' },
-  { link: '#', label: "Scotch'n'Soda Home" },
-];
-
-export function FooterSimple() {
-  const items = links.map((link) => (
-    <Anchor<'a'>
-      c="dimmed"
-      key={link.label}
-      href={link.link}
-      onClick={(event) => event.preventDefault()}
-      size="sm"
-    >
-      {link.label}
-    </Anchor>
-  ));
-
-  return (
-    <footer className={classes.footer}>
-      <Container className={classes.inner}>
-        <p style = {{ fontSize: '12px' }}> Built and mainted by Will & Madison</p>
-        <Group className={classes.links}>{items}</Group>
-      </Container>
-    </footer>
-  );
+function AdminProvider() {
+  return <Suspense fallback={
+        <Skeleton height={8} mt={6} width="70%" radius="xl" />
+  }>
+    <EnsureLogin/>
+    <Outlet/>
+    </Suspense>
 }
 
-function Admin({
-  username
-}: {
-  username: string
-}) {
-  const {mutate: createUser} = client.useMutation(
-    'post', '/',
-
-  )
-  return <Button
-          variant="filled"
-          color="grape" 
-          radius="lg"
-          size="compact-sm"
-          onClick={async () => {
-            await createUser({
-              body: {
-                username,
-            }
-            })
-          }}
-        >
-        Admin Login
-        </Button>
+function AdminPage() {
+  return <Text>Hello world</Text>
 }
 
+const router = createBrowserRouter([
+  {
+    Component: BaseProvider,
+    children: [
+      { index: true, path: "/", Component: PublicTable },
+      { path: "/admin", Component: AdminProvider, children: [
+        {path: "", Component: AdminPage}
+      ]
+      }
+    ],
+  },
+]);
+const App = () => <RouterProvider router={router} />;
 
-export default function App() {
-  const queryClient = new QueryClient();
-  return (
-    <MantineProvider>
-      <QueryClientProvider client={queryClient}>
-        <Stack style={{ flex: 1 }}>
-          <div style = {{ display: "flex",
-                          alignItems: "center",
-                          width: "90%",
-                          marginRight: "auto",
-                          marginLeft: "auto",
-                          marginTop: '30px',
-                          gap: "50px" }}>
-              <img src = {sns_logo} alt = "logo" width="150">
-              </img>
-
-              <div>
-                <h2 style = {{ color: "black", fontSize: '32px'}}> Scotch'n'Soda Shop Inventory</h2>
-              </div>
-
-              <div style={{ marginLeft: "auto" }}>
-                <Admin username="admin"></Admin>
-                <p style={{ fontSize: '12px', 
-                            maxWidth: '300px', 
-                            marginTop: '10px',
-                            minWidth: 0 }}>
-                 If you are a TAH looking to add or remove an item, please log in as admin.
-                </p>
-              </div>
-          </div>
-
-          <div style = {{ display: "flex",
-                          alignItems: "center",
-                          width: "95%",
-                          marginRight: "auto",
-                          marginLeft: "auto",
-                          marginTop: '70px',
-                          gap: "30px" }}>
-            <InventoryPublic></InventoryPublic>
-          </div>
-
-        </Stack>
-        <FooterSimple></FooterSimple>
-      </QueryClientProvider>
-    </MantineProvider>
-  )
-}
+export default App;

@@ -5,6 +5,7 @@ import type { paths } from "./schema"; // Your generated types
 // 1. Create the underlying openapi-fetch client
 export const fetchClient = createFetchClient<paths>({
   baseUrl: "http://localhost:8000",
+  credentials: "include",
 });
 
 // 2. Wrap it with openapi-react-query

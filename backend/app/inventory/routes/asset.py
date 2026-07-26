@@ -5,7 +5,8 @@ from app.inventory.schemas.asset import AssetCreateSchema, AssetDumpSchema, List
 from app.inventory.models.asset import Asset, AssetCategoryMap
 from app.inventory.models.category import Category
 from app.db import db
-from sqlalchemy import insert
+from sqlalchemy import insert, select
+
 
 router = APIRouter(
     prefix="/asset",
@@ -31,18 +32,18 @@ def asset_to_dump_schema(asset: Asset) -> AssetDumpSchema:
         notes=asset.notes,
     )
 
-@router.get("/")
-def get_assets(parems : Annotated[AssetSearchParems, Query()]) -> ListResponseSchema[AssetDumpSchema]:
-    print(parems)
-    query = db.query(Asset)
-    if parems.search is not None:
-        query = query.where(Asset.name.ilike(f'{parems.search}%'))
-    assets = query.all()
+@router.post("/list")
+def list_assets(body: AssetSearchParems) -> ListResponseSchema[AssetDumpSchema]:
+    query = select(Asset)
+    if body.search is not None:
+        query = query.where(Asset.name.ilike(f'{body.search}%'))
+
+    assets = db.execute(query).scalars().all()
     return ListResponseSchema(elements = [asset_to_dump_schema(asset) for asset in assets])
 
 
 
-@router.post("/")
+@router.post("/create")
 def create_asset(body: AssetCreateSchema) -> AssetDumpSchema:
     asset = Asset(
         file_id=body.file_id,
