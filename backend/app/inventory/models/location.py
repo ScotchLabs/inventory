@@ -1,6 +1,7 @@
-from app.db.base import Base
+from sqlalchemy import Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, Text, Numeric
+
+from app.db.base import Base
 
 
 class Location(Base):

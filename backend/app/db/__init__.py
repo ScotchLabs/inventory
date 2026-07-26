@@ -1,10 +1,12 @@
-from contextlib import contextmanager
-from typing import Generator
-from sqlalchemy import create_engine, Connection
 import os
+from collections.abc import Generator
+from contextlib import contextmanager
 from contextvars import ContextVar
-from sqlalchemy.orm import sessionmaker, Session
+
 from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
+
 
 load_dotenv()
 
@@ -27,7 +29,7 @@ class ConnectionProxy:
 
 
 @contextmanager
-def sync_db_connection_context() -> Generator[Session, None, None]:
+def sync_db_connection_context() -> Generator[Session]:
     Session = sessionmaker(bind=engine)
     session = Session()
     token = _sync_connection_ctx.set(session)

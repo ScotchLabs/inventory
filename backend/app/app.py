@@ -1,22 +1,16 @@
-from contextlib import contextmanager
-from contextvars import ContextVar
-from typing import Generator
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from app.users.models.user import User
-from sqlalchemy import insert
-from app.db import engine, sync_db_connection_context, db
 from fastapi.middleware.cors import CORSMiddleware
-from app.inventory.routes import router as inventory_router
-from app.users.routes import router as users_router
-from app.extensions.all_models import *
+from fastapi.responses import JSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 
+from app.db import sync_db_connection_context
+from app.extensions.all_models import *  # noqa
+from app.inventory.routes import router as inventory_router
+from app.users.routes import router as users_router
 from app.users.services.auth import NotAuthorizedException
 from app.utils.current_request import current_request_context
-from app.utils.environment import sns_environment, SNSDeploymentType
+from app.utils.environment import SNSDeploymentType, sns_environment
 
 
 app = FastAPI()

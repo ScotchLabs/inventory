@@ -1,16 +1,11 @@
+import secrets
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-import secrets
-from typing import Protocol
-from urllib.parse import urlencode
-from fastapi import APIRouter, HTTPException, Request
-from authlib.integrations.starlette_client import OAuth
-from fastapi.responses import RedirectResponse
+
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
 from app.db import db
-from app.users.models.user import User
 from app.users.models.token import Token
 from app.utils.current_request import get_current_request
 
@@ -32,7 +27,8 @@ def decode_public_token(encoded: str) -> DecodedPublicToken:
 
 def retrieve_decoded_token(token: DecodedPublicToken) -> Token | None:
     """
-    Does not check for expiry. Returns None if public doesn't exist/the private `token` is wrong
+    Does not check for expiry. Returns None if public doesn't exist
+    or the private `token` is wrong
     """
     db_token = db.execute(
         select(Token).where(Token.public == token.public)

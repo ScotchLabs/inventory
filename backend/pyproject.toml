@@ -14,3 +14,23 @@ dependencies = [
     "ruff>=0.15.22",
     "sqlalchemy[asyncio]>=2.0.51",
 ]
+
+[tool.ruff]
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+    "__pypackages__",
+    "dist",
+]
+target-version = "py314"
+
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C90", "UP"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-single-line = false
+lines-after-imports = 2

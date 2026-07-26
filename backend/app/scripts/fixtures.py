@@ -1,8 +1,9 @@
 from datetime import datetime
+
+from app.db import sync_db_connection_context
+from app.extensions.all_models import *  # noqa
 from app.inventory.routes.asset import create_asset
 from app.inventory.schemas.asset import AssetCreateSchema
-from app.db import sync_db_connection_context
-from app.extensions.all_models import *
 
 
 if __name__ == "__main__":

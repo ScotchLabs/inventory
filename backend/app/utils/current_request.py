@@ -1,8 +1,9 @@
+from collections.abc import Generator
 from contextlib import contextmanager
 from contextvars import ContextVar
-from typing import Generator
 
 from fastapi import Request
+
 
 _request_ctx: ContextVar[Request | None] = ContextVar("current_request", default=None)
 
@@ -15,7 +16,7 @@ def get_current_request() -> Request:
 
 
 @contextmanager
-def current_request_context(request: Request) -> Generator[Request, None, None]:
+def current_request_context(request: Request) -> Generator[Request]:
     previous_request = _request_ctx.set(request)
     try:
         yield request

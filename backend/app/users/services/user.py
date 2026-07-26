@@ -1,17 +1,8 @@
-from dataclasses import dataclass
-from datetime import datetime, timedelta
-import secrets
-from typing import Protocol
-from urllib.parse import urlencode
-from fastapi import APIRouter, HTTPException, Request
-from authlib.integrations.starlette_client import OAuth
-from fastapi.responses import RedirectResponse
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
 from app.db import db
 from app.users.models.user import User
-from app.users.models.token import Token
 from app.users.services.auth import (
     get_current_valid_token,
     get_current_valid_token_or_none,

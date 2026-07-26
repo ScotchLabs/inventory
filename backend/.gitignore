@@ -1,6 +1,7 @@
 __pycache__/
 build/
 dist/
+.ruff_cache/
 .venv
 
 .vscode/
@@ -12,4 +13,3 @@ dist/
 .env
 .env.local
 .env.*.local
-

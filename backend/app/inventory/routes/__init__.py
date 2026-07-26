@@ -1,6 +1,8 @@
 from fastapi import APIRouter
-from app.inventory.routes.locations import router as locations_router
+
 from app.inventory.routes.asset import router as assets_router
+from app.inventory.routes.locations import router as locations_router
+
 
 router = APIRouter(
     prefix="/inventory",

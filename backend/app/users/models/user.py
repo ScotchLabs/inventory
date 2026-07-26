@@ -1,6 +1,8 @@
-from app.db.base import Base
-from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy import CheckConstraint, Integer, Text
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.db.base import Base
+
 
 ADMIN_EMAILS = ["madisone@andrew.cmu.edu"]
 

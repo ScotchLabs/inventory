@@ -1,12 +1,15 @@
-from typing import TYPE_CHECKING
-from app.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, Text, ForeignKey, Numeric, DateTime, Table, Column
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
+from typing import TYPE_CHECKING
+
+from sqlalchemy import DateTime, ForeignKey, Integer, Numeric, Text
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.db.base import Base
+
 
 if TYPE_CHECKING:
-    from app.inventory.models.category import Category
+    pass
 
 
 class AssetCategoryMap(Base):

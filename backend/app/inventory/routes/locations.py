@@ -1,11 +1,10 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
-from app.db import engine
-from sqlalchemy import Connection
+from sqlalchemy import insert
+
 from app.db import db
-from sqlalchemy import insert, Row
-from app.inventory.schemas.location import LocationCreateSchema, LocationDumpSchema
 from app.inventory.models.location import Location
+from app.inventory.schemas.location import LocationCreateSchema, LocationDumpSchema
+
 
 router = APIRouter(
     prefix="/locations",

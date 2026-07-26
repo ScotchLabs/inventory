@@ -1,6 +1,6 @@
+import os
 from dataclasses import dataclass
 from enum import StrEnum
-import os
 
 
 class SNSDeploymentType(StrEnum):

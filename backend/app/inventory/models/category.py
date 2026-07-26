@@ -1,10 +1,13 @@
 from typing import TYPE_CHECKING
+
+from sqlalchemy import Integer, Text
+from sqlalchemy.orm import Mapped, mapped_column
+
 from app.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, Text, Numeric
+
 
 if TYPE_CHECKING:
-    from app.inventory.models.asset import Asset
+    pass
 
 
 class Category(Base):

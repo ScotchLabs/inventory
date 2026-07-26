@@ -5,11 +5,9 @@ from app.users.schemas.user import (
     UserDumpSchemaWithSessionInfo,
 )
 from app.users.services.auth import (
-    get_current_valid_token,
     get_current_valid_token_or_none,
 )
-from app.users.services.user import get_current_user, get_user_by_id
-from app.utils.current_request import get_current_request
+from app.users.services.user import get_user_by_id
 
 
 router = APIRouter(

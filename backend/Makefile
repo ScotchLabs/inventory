@@ -15,4 +15,11 @@ generate-fixtures:
 	python3 -m app.scripts.fixtures
 
 format:
-	uv run ruff format .
+	ruff format .
+
+check:
+	ruff check
+
+lint-fix:
+	ruff format .
+	ruff check --fix

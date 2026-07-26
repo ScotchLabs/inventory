@@ -1,16 +1,15 @@
-from fastapi import APIRouter, Query
-from typing import Annotated
+from fastapi import APIRouter
 from pydantic import BaseModel
+from sqlalchemy import insert, select
+
+from app.db import db
+from app.inventory.models.asset import Asset, AssetCategoryMap
 from app.inventory.schemas.asset import (
     AssetCreateSchema,
     AssetDumpSchema,
-    ListResponseSchema,
     AssetSearchParems,
+    ListResponseSchema,
 )
-from app.inventory.models.asset import Asset, AssetCategoryMap
-from app.inventory.models.category import Category
-from app.db import db
-from sqlalchemy import insert, select
 
 
 router = APIRouter(
