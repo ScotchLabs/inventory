@@ -13,3 +13,6 @@ spec:
 
 generate-fixtures:
 	python3 -m app.scripts.fixtures
+
+format:
+	uv run ruff format .
