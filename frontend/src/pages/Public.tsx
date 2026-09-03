@@ -382,10 +382,9 @@ export default function Public() {
           <div
             style={{
               display: "flex",
+              justifyContent: "center",
               alignItems: "center",
-              width: "95%",
-              marginRight: "auto",
-              marginLeft: "auto",
+              width: "100%",
               marginTop: "70px",
               gap: "30px",
             }}
