@@ -1,8 +1,9 @@
 import { useState } from 'react'
+import axios from 'axios'
 import { client } from './api/client'
 import '@mantine/core/styles.css'
 import '@mantine/dropzone/styles.css'
-import { Table, MantineProvider, Stack, Button, Anchor, Container, Group, Text, TextInput } from '@mantine/core'
+import { Table, MantineProvider, Stack, Button, Anchor, Container, Image, Group, Text, TextInput } from '@mantine/core'
 import { IconSearch, IconUpload, IconX, IconPhoto } from '@tabler/icons-react';
 import classes from './FooterSimple.module.css';
 import './App.css'
@@ -17,18 +18,45 @@ type Asset = components['schemas']['AssetDumpSchema']
 type SatisDropzoneProps = {
 }
 
+
+async function satisUploadFiles({
+    files
+}: {
+    files: FileWithPath[]
+}) {
+    const formData = new FormData();
+
+  for (const file of files) {
+    formData.append('files', file);
+  }
+    const response = await axios.post('http://localhost:8000/files/upload', formData);
+
+    return response.data;
+}
+
+type FileEmbedProps = {
+    file: FileDumpSchema
+}
+function ImageEmbed({
+    file
+}: FileEmbedProps) {
+    return  <Image
+          src={file.url}
+          radius="md"
+          h={300}
+          w="auto"
+          fit="contain"
+          alt="Preview of uploaded photo"
+          // Clean up memory if the component unmounts or changes
+          onLoad={() => file && URL.revokeObjectURL(file.url)}
+        />
+}
+
 function SatisDropzone({...props}: SatisDropzoneProps) {
-    const {mutate} = client.useMutation('post', '/file/upload/')
     return (
     <Dropzone
       onDrop={async (files) => {
-          const blob = new Blob([await files[0].bytes()], { type: files[0].type });
-      
-          const formData = new FormData();
-          formData.append('file', blob, files[0].name);
-          mutate({ body: formData})
-
-          console.log('accepted files', files)
+          await satisUploadFiles({files})
       }
 
       }

@@ -1,64 +1,57 @@
-from app.files.models import File
+from typing import Annotated
 from app.db import db
-from sqlalchemy import insert
-from uuid import uuid4
-from fastapi import APIRouter, UploadFile, File as FastAPIFile
-from app.files.schemas import FileDumpSchema
-from app.utils.strings import make_slug
-from app.utils.db_helpers import exec_scalar
+from app.inventory.schemas.asset import ListResponseSchema
+from fastapi import APIRouter, UploadFile, File as FastAPIFile, Query
+from app.files.schemas import FileDumpSchema, FileSearchParams
+from app.utils.db_helpers import exec_scalars
+from app.files.services import file_search_query, handle_file_upload
 
 router = APIRouter(
-    prefix="/file",
+    prefix="/files",
     responses={404: {"description": "Not found"}},
 )
 
 
-@router.post("/upload/")
-async def upload_single_file(file: UploadFile = FastAPIFile(...)) -> FileDumpSchema:
-    satis_file = handle_file_upload(
-        contents=await file.read(),
-        filename=file.filename,
-        content_type=file.content_type,
-    )
-    return FileDumpSchema(
-        id=satis_file.id,
-        url=satis_file.url,
-        filename=satis_file.filename,
-    )
-
-
-def save_file(
-    contents: bytes,
-    filename: str,
-) -> str:
-    url = f"localdata/{make_slug()}-{filename}"
-    with open(url, "wb") as f:
-        f.write(contents)
-
-    return url
-
-
-def handle_file_upload(
-    contents: bytes, filename: str | None, content_type: str | None
-) -> File:
-    resolved_filename = filename if filename is not None else f"{make_slug()}-upload"
-    file_url = save_file(
-        contents=contents,
-        filename=resolved_filename,
+@router.get("/list")
+async def files_list(
+    params: Annotated[FileSearchParams, Query()],
+) -> ListResponseSchema[FileDumpSchema]:
+    files = exec_scalars(file_search_query(params))
+    return ListResponseSchema(
+        elements=[
+            FileDumpSchema(
+                id=satis_file.id,
+                url=f"http://localhost:8000/files/static/{satis_file.url}",
+                filename=satis_file.filename,
+            )
+            for satis_file in files
+        ]
     )
 
-    file = exec_scalar(
-        insert(File)
-        .values(
-            [
-                {
-                    "url": file_url,
-                    "filename": resolved_filename,
-                    "content_type": content_type or "UNKNOWN",
-                }
-            ]
+
+@router.post("/upload")
+async def files_upload(
+    files: list[UploadFile] = FastAPIFile(...),
+) -> ListResponseSchema[FileDumpSchema]:
+    to_return = []
+    for file in files:
+        to_return.append(
+            handle_file_upload(
+                contents=await file.read(),
+                filename=file.filename,
+                content_type=file.content_type,
+            )
         )
-        .returning(File)
+    db.commit()
+    return ListResponseSchema(
+        elements=[
+            FileDumpSchema(
+                id=satis_file.id,
+                url=f"http://localhost:8000/{satis_file.url}",
+                filename=satis_file.filename,
+            )
+            for satis_file in to_return
+        ]
     )
 
-    return file
+
