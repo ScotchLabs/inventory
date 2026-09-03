@@ -1,0 +1,16 @@
+# AWS Configuration
+aws_region       = "us-east-1"
+instance_type    = "t3.medium"
+key_pair_name    = "my-app-key"  # EC2 key pair name you created in AWS
+
+# Database
+postgres_db       = "app"
+postgres_user     = "app"
+postgres_password = "change-me-to-a-secure-password"
+
+# Application Secrets
+google_oauth_client_id     = "your-google-oauth-client-id.apps.googleusercontent.com"
+google_oauth_client_secret = "your-google-oauth-client-secret"
+web_root_url              = "https://example.com"        # Frontend URL (e.g., your domain)
+api_root_url              = "https://example.com/api"    # API URL (often same as web_root but with /api path)
+fastapi_session_secret    = "your-random-secret-key-here"

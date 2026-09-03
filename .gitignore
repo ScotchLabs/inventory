@@ -1,1 +1,6 @@
 .env
+*.pem
+.terraform
+terraform.tfstate*
+*.tfvars
+!terraform.tfvars.example
