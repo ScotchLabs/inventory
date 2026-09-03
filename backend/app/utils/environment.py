@@ -5,6 +5,7 @@ from enum import StrEnum
 
 class SNSDeploymentType(StrEnum):
     LOCALDEV = "LOCALDEV"
+    PRODUCTION = "production"
 
 
 @dataclass
