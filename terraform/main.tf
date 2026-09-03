@@ -37,7 +37,7 @@ variable "instance_type" {
 variable "root_volume_size_gb" {
   description = "Root EBS volume size in GB"
   type        = number
-  default     = 10
+  default     = 30
 }
 
 variable "key_pair_name" {
@@ -128,7 +128,7 @@ data "aws_subnet" "selected" {
 
 resource "aws_security_group" "app_sg" {
   name        = "app-ec2-sg"
-  description = "SG for app EC2 instance (SSH + HTTP/HTTPS from Cloudflare + NFS to EFS)"
+  description = "SG for app EC2 instance (SSH + NFS to EFS)"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
@@ -137,54 +137,6 @@ resource "aws_security_group" "app_sg" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = [var.ssh_ingress_cidr]
-  }
-
-  # HTTP from Cloudflare only
-  ingress {
-    description = "HTTP from Cloudflare"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = [
-      "173.245.48.0/20",
-      "103.21.244.0/22",
-      "103.22.200.0/22",
-      "103.31.4.0/22",
-      "141.101.64.0/18",
-      "108.162.192.0/18",
-      "190.93.240.0/20",
-      "188.114.96.0/20",
-      "197.234.240.0/22",
-      "198.41.128.0/17",
-      "162.158.0.0/15",
-      "104.16.0.0/12",
-      "172.64.0.0/13",
-      "131.0.72.0/22",
-    ]
-  }
-
-  # HTTPS from Cloudflare only
-  ingress {
-    description = "HTTPS from Cloudflare"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [
-      "173.245.48.0/20",
-      "103.21.244.0/22",
-      "103.22.200.0/22",
-      "103.31.4.0/22",
-      "141.101.64.0/18",
-      "108.162.192.0/18",
-      "190.93.240.0/20",
-      "188.114.96.0/20",
-      "197.234.240.0/22",
-      "198.41.128.0/17",
-      "162.158.0.0/15",
-      "104.16.0.0/12",
-      "172.64.0.0/13",
-      "131.0.72.0/22",
-    ]
   }
 
   egress {
