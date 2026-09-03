@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.db.base import Base
 
 
-ADMIN_EMAILS = ["madisone@andrew.cmu.edu"]
+ADMIN_EMAILS = ["madisone@andrew.cmu.edu", "hschremm@andrew.cmu.edu"]
 
 
 class User(Base):

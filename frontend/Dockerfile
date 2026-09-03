@@ -6,7 +6,16 @@ COPY . .
 RUN npm run build
 
 FROM nginx:alpine
+RUN apk add --no-cache certbot certbot-nginx openssl bash
+
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY entrypoint.sh /startup.sh
+COPY renew-certs.sh /renew-certs.sh
 COPY --from=builder /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+
+RUN chmod +x /startup.sh /renew-certs.sh
+
+EXPOSE 80 443
+
+ENTRYPOINT []
+CMD ["/bin/bash", "/startup.sh"]

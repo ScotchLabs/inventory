@@ -44,9 +44,14 @@ services:
     image: sns-inventory-frontend:latest
     container_name: frontend
     restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - /mnt/efs/letsencrypt:/etc/letsencrypt
+      - /mnt/efs/certbot:/var/www/certbot
     depends_on:
       - backend
     networks:

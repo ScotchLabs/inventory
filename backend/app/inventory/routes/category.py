@@ -26,13 +26,6 @@ def category_to_dump_schema(category: Category) -> CategoryDumpSchema:
 
 @router.post("/create")
 async def create_location(body: CategoryCreateSchema) -> CategoryDumpSchema:
-    category = db.execute(
-        insert(Category)
-        .values(name=body.name, classification=body.classification)
-        .returning(Category)
-    ).scalar_one()
-    db.commit()
-
     existing = db.execute(
         select(Category).where(Category.name.ilike(body.name))
     ).scalar_one_or_none()
@@ -41,6 +34,13 @@ async def create_location(body: CategoryCreateSchema) -> CategoryDumpSchema:
         raise HTTPException(
             status_code=400, detail=f"Category '{body.name}' already exists"
         )
+
+    category = db.execute(
+        insert(Category)
+        .values(name=body.name, classification=body.classification)
+        .returning(Category)
+    ).scalar_one()
+    db.commit()
 
     return category_to_dump_schema(category)
 

@@ -252,25 +252,27 @@ export function Inventory(admin:boolean) {
     </Table.Tr>
 
   return (
-    <div style={{ display: "inline-block", maxWidth: "100%" }}>
-      <TextInput
-          placeholder="Search by any field"
-          mb="md"
-          leftSection={<IconSearch size={16} stroke={1.5} />}
-          onChange={(event) => setSearch(event.currentTarget.value)}
-        />
-      <Table.ScrollContainer minWidth={500} maxHeight={300}>
-        <Table
-          withTableBorder
-          highlightOnHover
-          stickyHeader
-        >
-          <Table.Thead>
-            {headers}
-          </Table.Thead>
-          <Table.Tbody style={{ fontSize: "13px" }}>{rows}</Table.Tbody>
-        </Table>
-      </Table.ScrollContainer>
+    <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+      <div style={{ width: "100%", maxWidth: "1200px", paddingLeft: "20px", paddingRight: "20px" }}>
+        <TextInput
+            placeholder="Search by any field"
+            mb="md"
+            leftSection={<IconSearch size={16} stroke={1.5} />}
+            onChange={(event) => setSearch(event.currentTarget.value)}
+          />
+        <Table.ScrollContainer minWidth={500} maxHeight={300}>
+          <Table
+            withTableBorder
+            highlightOnHover
+            stickyHeader
+          >
+            <Table.Thead>
+              {headers}
+            </Table.Thead>
+            <Table.Tbody style={{ fontSize: "13px" }}>{rows}</Table.Tbody>
+          </Table>
+        </Table.ScrollContainer>
+      </div>
     </div>
   );
 }

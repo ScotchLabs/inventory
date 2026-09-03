@@ -101,6 +101,11 @@ variable "fastapi_session_secret" {
   sensitive   = true
 }
 
+variable "domain_name" {
+  description = "Domain name for Let's Encrypt certificate (e.g., example.com)"
+  type        = string
+}
+
 ##############################################
 # Networking - use default VPC/subnet to keep this simple
 ##############################################
@@ -127,8 +132,8 @@ data "aws_subnet" "selected" {
 ##############################################
 
 resource "aws_security_group" "app_sg" {
-  name        = "app-ec2-sg"
-  description = "SG for app EC2 instance (SSH + NFS to EFS)"
+  name_prefix = "app-ec2-sg-"
+  description = "SG for app EC2 instance"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
@@ -137,6 +142,22 @@ resource "aws_security_group" "app_sg" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = [var.ssh_ingress_cidr]
+  }
+
+  ingress {
+    description = "HTTP for ACME validation"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -274,6 +295,7 @@ resource "aws_secretsmanager_secret_version" "app_secrets" {
     web_root_url              = var.web_root_url
     api_root_url              = var.api_root_url
     fastapi_session_secret    = var.fastapi_session_secret
+    domain_name               = var.domain_name
   })
 }
 
@@ -326,6 +348,7 @@ resource "aws_instance" "app" {
     postgres_user     = var.postgres_user
     postgres_password = var.postgres_password
     app_image         = var.app_image
+    domain_name       = var.domain_name
   })
 
   tags = {

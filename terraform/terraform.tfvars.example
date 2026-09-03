@@ -14,3 +14,6 @@ google_oauth_client_secret = "your-google-oauth-client-secret"
 web_root_url              = "https://example.com"        # Frontend URL (e.g., your domain)
 api_root_url              = "https://example.com/api"    # API URL (often same as web_root but with /api path)
 fastapi_session_secret    = "your-random-secret-key-here"
+
+# HTTPS / Let's Encrypt
+domain_name               = "example.com"                # Domain for Let's Encrypt certificate

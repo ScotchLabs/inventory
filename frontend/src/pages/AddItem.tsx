@@ -1,6 +1,6 @@
-import { Skeleton, TextInput, NumberInput, MultiSelect, Select, Textarea, Button, Group, Loader, Modal } from "@mantine/core";
+import { Skeleton, TextInput, NumberInput, MultiSelect, Select, Textarea, Button, Group, Loader, Modal, Notification } from "@mantine/core";
 import { useForm, } from "@mantine/form";
-import { useEffect, Suspense, useMemo } from "react";
+import { useEffect, Suspense, useMemo, useState } from "react";
 import { useNavigate, Outlet } from "react-router";
 import { client } from "../api/client";
 import type { components } from "../api/schema";
@@ -100,11 +100,12 @@ export function AddNewCategory({type} : {type : string}) {
         mode: 'uncontrolled',
         initialValues: {category_name: ""},
         validate: {
-            category_name: (value) => (value.length < 2 ? 'Category name must be at least two characters' : 
+            category_name: (value) => (value.length < 2 ? 'Category name must be at least two characters' :
                                        (categories?.categories ?? []).some(cat => cat.name.toLowerCase().trim() === value.toLowerCase().trim()) ? 'Category name already exists' : null)
         }
     })
     const [opened_inner, { open, close }] = useDisclosure(false);
+    const [error, setError] = useState<string | null>(null);
     const queryClient = useQueryClient();
 
     const { mutateAsync: handleAdd } = client.useMutation(
@@ -120,22 +121,29 @@ export function AddNewCategory({type} : {type : string}) {
                   queryKey: ["post", '/inventory/categories/list_secondary'],
                   exact: false
                 });
+                form_inner.reset();
+                form_inner.setFieldValue('category_name', '');
+                setError(null);
                 close()
               }
             }
         );
 
-    const handleSubmit = form_inner.onSubmit(async (values ) => { try {
-                await handleAdd({
-                  body: {
-                    name: values.category_name,
-                    classification: type.toUpperCase()
-                  }
-                })
-              } catch (error) {
-                console.error('Failed to add category:', error);
-                throw error;
-              } });
+    const handleSubmit = form_inner.onSubmit(async (values ) => {
+      try {
+        setError(null);
+        await handleAdd({
+          body: {
+            name: values.category_name,
+            classification: type.toUpperCase()
+          }
+        })
+      } catch (error: any) {
+        const errorMessage = error?.response?.data?.detail || error?.message || 'Failed to add category';
+        setError(errorMessage);
+        console.error('Failed to add category:', error);
+      }
+    });
 
     return (
         <>
@@ -148,6 +156,7 @@ export function AddNewCategory({type} : {type : string}) {
                     radius={0}
                     transitionProps={{ transition: 'fade', duration: 200 }}
                 ><div onClick={(e) => e.stopPropagation()}>
+                    {error && <Notification title="Error" color="red" onClose={() => setError(null)}>{error}</Notification>}
                     <form onSubmit={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -164,7 +173,7 @@ export function AddNewCategory({type} : {type : string}) {
                             type="submit"
                             variant="light"
                             color="rgba(28, 61, 145, 1)"
-                            disabled={form_inner.submitting}
+                            disabled={form_inner.submitting || !form_inner.isDirty()}
                             rightSection={form_inner.submitting? <Loader size={16} /> : null}
                             >
                             {form_inner.submitting? 'Updating...' : 'Submit'}
@@ -195,11 +204,12 @@ export function AddNewLocation() {
         mode: 'uncontrolled',
         initialValues: {location_name: ""},
         validate: {
-            location_name: (value) => (value.length < 2 ? 'Location name must be at least two characters' : 
+            location_name: (value) => (value.length < 2 ? 'Location name must be at least two characters' :
                                         (locations?.locations ?? []).some(loc => loc.name.toLowerCase().trim() === value.toLowerCase().trim()) ? 'Location name already exists' : null)
         }
     })
     const [opened_inner, { open, close }] = useDisclosure(false);
+    const [error, setError] = useState<string | null>(null);
     const queryClient = useQueryClient();
 
     const { mutateAsync: handleAdd } = client.useMutation(
@@ -211,21 +221,28 @@ export function AddNewLocation() {
                   queryKey: ["post", '/inventory/locations/list'],
                   exact: false
                 });
+                form_inner.reset();
+                form_inner.setFieldValue('location_name', '');
+                setError(null);
                 close()
               }
             }
         );
 
-    const handleSubmit = form_inner.onSubmit(async ( values ) => { try {
-                await handleAdd({
-                  body: {
-                    name: values.location_name,
-                  }
-                })
-              } catch (error) {
-                console.error('Failed to add location:', error);
-                throw error;
-              } });
+    const handleSubmit = form_inner.onSubmit(async ( values ) => {
+      try {
+        setError(null);
+        await handleAdd({
+          body: {
+            name: values.location_name,
+          }
+        })
+      } catch (error: any) {
+        const errorMessage = error?.response?.data?.detail || error?.message || 'Failed to add location';
+        setError(errorMessage);
+        console.error('Failed to add location:', error);
+      }
+    });
 
     return (
         <>
@@ -238,6 +255,7 @@ export function AddNewLocation() {
                     radius={0}
                     transitionProps={{ transition: 'fade', duration: 200 }}
                 ><div onClick={(e) => e.stopPropagation()}>
+                    {error && <Notification title="Error" color="red" onClose={() => setError(null)}>{error}</Notification>}
                     <form onSubmit={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -254,7 +272,7 @@ export function AddNewLocation() {
                             type="submit"
                             variant="light"
                             color="rgba(28, 61, 145, 1)"
-                            disabled={form_inner.submitting}
+                            disabled={form_inner.submitting || !form_inner.isDirty()}
                             rightSection={form_inner.submitting? <Loader size={16} /> : null}
                             >
                             {form_inner.submitting? 'Updating...' : 'Submit'}

@@ -1,0 +1,31 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /opt/inventory
+            git pull origin main
+
+            # Build backend
+            docker build --no-cache -t sns-inventory-backend:latest ./backend
+
+            # Build frontend
+            docker build --no-cache -t sns-inventory-frontend:latest ./frontend
+
+            # Restart services
+            sudo systemctl restart app-compose.service
+
+            echo "Deployment complete!"
