@@ -128,7 +128,7 @@ data "aws_subnet" "selected" {
 
 resource "aws_security_group" "app_sg" {
   name        = "app-ec2-sg"
-  description = "SG for app EC2 instance (SSH + NFS to EFS)"
+  description = "SG for app EC2 instance (SSH + HTTP/HTTPS from Cloudflare + NFS to EFS)"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
@@ -139,14 +139,53 @@ resource "aws_security_group" "app_sg" {
     cidr_blocks = [var.ssh_ingress_cidr]
   }
 
-  # Uncomment / adjust if Postgres needs to be reachable from outside the instance
-  # ingress {
-  #   description = "Postgres"
-  #   from_port   = 5432
-  #   to_port     = 5432
-  #   protocol    = "tcp"
-  #   cidr_blocks = ["10.0.0.0/8"]
-  # }
+  # HTTP from Cloudflare only
+  ingress {
+    description = "HTTP from Cloudflare"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [
+      "173.245.48.0/20",
+      "103.21.244.0/22",
+      "103.22.200.0/22",
+      "103.31.4.0/22",
+      "141.101.64.0/18",
+      "108.162.192.0/18",
+      "190.93.240.0/20",
+      "188.114.96.0/20",
+      "197.234.240.0/22",
+      "198.41.128.0/17",
+      "162.158.0.0/15",
+      "104.16.0.0/12",
+      "172.64.0.0/13",
+      "131.0.72.0/22",
+    ]
+  }
+
+  # HTTPS from Cloudflare only
+  ingress {
+    description = "HTTPS from Cloudflare"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [
+      "173.245.48.0/20",
+      "103.21.244.0/22",
+      "103.22.200.0/22",
+      "103.31.4.0/22",
+      "141.101.64.0/18",
+      "108.162.192.0/18",
+      "190.93.240.0/20",
+      "188.114.96.0/20",
+      "197.234.240.0/22",
+      "198.41.128.0/17",
+      "162.158.0.0/15",
+      "104.16.0.0/12",
+      "172.64.0.0/13",
+      "131.0.72.0/22",
+    ]
+  }
 
   egress {
     description = "All outbound"
@@ -343,11 +382,32 @@ resource "aws_instance" "app" {
 }
 
 ##############################################
+# Elastic IP - Permanent public IP for the instance
+##############################################
+
+resource "aws_eip" "app" {
+  instance = aws_instance.app.id
+  domain   = "vpc"
+
+  tags = {
+    Name = "app-eip"
+  }
+
+  depends_on = [aws_instance.app]
+}
+
+##############################################
 # Outputs
 ##############################################
 
 output "instance_public_ip" {
-  value = aws_instance.app.public_ip
+  value       = aws_eip.app.public_ip
+  description = "Elastic IP (permanent public IP address)"
+}
+
+output "instance_public_ip_temporary" {
+  value       = aws_instance.app.public_ip
+  description = "Temporary public IP (changes on stop/start - use the Elastic IP instead)"
 }
 
 output "instance_id" {
