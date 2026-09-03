@@ -13,16 +13,23 @@
   },
   "dependencies": {
     "@mantine/core": "^9.4.1",
+    "@mantine/form": "^9.5.2",
     "@mantine/hooks": "^9.4.1",
+    "@phosphor-icons/react": "github:phosphor-icons/react",
     "@tabler/icons-react": "^3.45.0",
     "@tanstack/react-query": "^5.101.2",
+    "date-fns": "^4.4.0",
     "openapi-fetch": "^0.17.0",
     "openapi-react-query": "^0.5.4",
+    "phosphor": "^0.7.1",
+    "phosphor-icons": "^1.4.2",
     "prettier": "^3.9.5",
     "react": "^19.2.7",
+    "react-datetime": "^3.3.1",
     "react-dom": "^19.2.7",
-    "react-router": "^8.3.0"
-    },
+    "react-router": "^8.3.0",
+    "tanstack": "^2.0.3"
+  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.13.2",

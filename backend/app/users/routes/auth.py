@@ -43,7 +43,7 @@ async def callback(request: Request):
         user = get_or_create_user_for_email(email)
         sns_token = create_token_for_user(user.id)
 
-        response = RedirectResponse(url=sns_environment.web_root_url)
+        response = RedirectResponse(url=f"{sns_environment.web_root_url}/admin")
 
         response.set_cookie(
             key="public_token",
@@ -74,3 +74,16 @@ async def login(request: Request):
         e.with_traceback(None)
         logger.exception(e)
         raise HTTPException(status_code=400) from None
+
+
+@router.get("/logout")
+async def logout(request: Request):
+    response = RedirectResponse(url=f"{sns_environment.web_root_url}")
+
+    response.delete_cookie(
+        key="public_token",
+        secure=sns_environment.deployment_type != SNSDeploymentType.LOCALDEV,
+        samesite="lax",
+    )
+
+    return response

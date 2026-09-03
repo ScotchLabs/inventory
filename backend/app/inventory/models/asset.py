@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 class AssetCategoryMap(Base):
     __tablename__ = "asset_categories"
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     asset_id: Mapped[int] = mapped_column(ForeignKey("assets.id"))
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
     type: Mapped[str] = mapped_column(Text)
@@ -30,9 +30,7 @@ class Asset(Base):
         nullable=True,
     )
 
-    name: Mapped[str] = mapped_column(
-        Text,
-    )
+    name: Mapped[str] = mapped_column(Text, unique=True, index=True)
 
     name_verbose: Mapped[str] = mapped_column(
         Text,
@@ -52,7 +50,7 @@ class Asset(Base):
     )
 
     last_updated: Mapped[datetime] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
     )
 
     last_updated_by: Mapped[int | None] = mapped_column(

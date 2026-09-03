@@ -15,9 +15,7 @@ class Category(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
-    name: Mapped[str] = mapped_column(
-        Text,
-    )
+    name: Mapped[str] = mapped_column(Text, unique=True, index=True)
 
     classification: Mapped[str] = mapped_column(
         Text,

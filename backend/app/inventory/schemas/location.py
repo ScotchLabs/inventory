@@ -13,5 +13,5 @@ class LocationDumpSchema(LocationBaseSchema):
     id: int
 
 
-class LocationListResponseSchema(BaseModel):
-    locations: list[LocationDumpSchema]
+class LocationListResponseSchema[T: BaseModel](BaseModel):
+    locations: list[T]

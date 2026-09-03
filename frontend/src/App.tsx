@@ -2,13 +2,11 @@ import {
   createBrowserRouter,
   Outlet,
   RouterProvider,
-  useNavigate,
 } from "react-router";
 import { PublicTable } from "./pages/Public";
-import { MantineProvider, Skeleton, Text } from "@mantine/core";
-import { client } from "./api/client";
-import { Suspense, useEffect } from "react";
+import { MantineProvider } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AdminPage, AdminProvider } from './pages/Admin'
 
 const queryClient = new QueryClient();
 
@@ -20,32 +18,6 @@ function BaseProvider() {
       </QueryClientProvider>
     </MantineProvider>
   );
-}
-function EnsureLogin() {
-  const { data: session } = client.useSuspenseQuery(
-    "get",
-    "/users/users/current-session",
-  );
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!session.user) {
-      navigate("/");
-    }
-  }, [session, navigate]);
-  return <></>;
-}
-
-function AdminProvider() {
-  return (
-    <Suspense fallback={<Skeleton height={8} mt={6} width="70%" radius="xl" />}>
-      <EnsureLogin />
-      <Outlet />
-    </Suspense>
-  );
-}
-
-function AdminPage() {
-  return <Text>Hello world</Text>;
 }
 
 const router = createBrowserRouter([
