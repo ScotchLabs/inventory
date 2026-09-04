@@ -1,6 +1,8 @@
-from app.db.base import Base
+from sqlalchemy import Integer
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import Integer, Text
+
+from app.db.base import Base
 
 
 class File(Base):

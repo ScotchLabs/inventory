@@ -1,250 +1,39 @@
-import { useState } from 'react'
-import axios from 'axios'
-import { client } from './api/client'
-import '@mantine/core/styles.css'
-import '@mantine/dropzone/styles.css'
-import { Table, MantineProvider, Stack, Button, Anchor, Container, Image, Group, Text, TextInput } from '@mantine/core'
-import { IconSearch, IconUpload, IconX, IconPhoto } from '@tabler/icons-react';
-import classes from './FooterSimple.module.css';
-import './App.css'
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import sns_logo from "./assets/sns_logo.png"
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import "@mantine/core/styles.css";
+import "@mantine/dropzone/styles.css";
+import {
+  MantineProvider,
+} from "@mantine/core";
+import "./App.css";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router";
+import { PublicTable } from "./pages/Public";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AdminPage, AdminProvider } from "./pages/Admin";
 
-import type { components } from './api/schema'
-type Asset = components['schemas']['AssetDumpSchema']
+const queryClient = new QueryClient();
 
-
-type SatisDropzoneProps = {
-}
-
-
-async function satisUploadFiles({
-    files
-}: {
-    files: FileWithPath[]
-}) {
-    const formData = new FormData();
-
-  for (const file of files) {
-    formData.append('files', file);
-  }
-    const response = await axios.post('http://localhost:8000/files/upload', formData);
-
-    return response.data;
-}
-
-type FileEmbedProps = {
-    file: FileDumpSchema
-}
-function ImageEmbed({
-    file
-}: FileEmbedProps) {
-    return  <Image
-          src={file.url}
-          radius="md"
-          h={300}
-          w="auto"
-          fit="contain"
-          alt="Preview of uploaded photo"
-          // Clean up memory if the component unmounts or changes
-          onLoad={() => file && URL.revokeObjectURL(file.url)}
-        />
-}
-
-function SatisDropzone({...props}: SatisDropzoneProps) {
-    return (
-    <Dropzone
-      onDrop={async (files) => {
-          await satisUploadFiles({files})
-      }
-
-      }
-      onReject={(files) => console.log('rejected files', files)}
-      maxSize={5 * 1024 ** 2}
-      accept={IMAGE_MIME_TYPE}
-      {...props}
-    >
-      <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
-        <Dropzone.Accept>
-          <IconUpload size={52} color="var(--mantine-color-blue-6)" />
-        </Dropzone.Accept>
-        <Dropzone.Reject>
-          <IconX size={52} color="var(--mantine-color-red-6)" />
-        </Dropzone.Reject>
-        <Dropzone.Idle>
-          <IconPhoto size={52} color="var(--mantine-color-dimmed)" />
-        </Dropzone.Idle>
-
-        <div>
-          <Text size="xl" inline>
-            Drag images here or click to select files
-          </Text>
-          <Text size="sm" c="dimmed" inline mt={7}>
-            Attach as many files as you like, each file should not exceed 5mb
-          </Text>
-        </div>
-      </Group>
-    </Dropzone>
-  );
-}
-
-function InventoryPublic() {
-  const [search, setSearch] = useState('')
-  const { data: assets } = client.useQuery('get', '/inventory/asset/?search=')
-  console.log(search)
-  if (!assets) return <div>Loading...</div>
-
-
-  const rows = assets.elements.map((asset) => (
-    <Table.Tr key={asset.id}>
-      <Table.Td>{asset.name}</Table.Td>
-      <Table.Td>{asset.name_verbose}</Table.Td>
-      <Table.Td>{asset.quantity}</Table.Td>
-      <Table.Td>{asset.categories}</Table.Td>
-      <Table.Td>{asset.sub_categories}</Table.Td>
-      <Table.Td>{asset.current_location}</Table.Td>
-      <Table.Td>{asset.permanent_location_id}</Table.Td>
-      <Table.Td>{asset.last_updated}</Table.Td>
-      <Table.Td>{asset.last_updated_by}</Table.Td>
-      <Table.Td>{asset.notes}</Table.Td>
-    </Table.Tr>
-  ));
-
-  return (
-    <div style={{ display: 'inline-block', maxWidth: '100%' }}>
-      <Table.ScrollContainer minWidth={500} maxHeight={300}>
-        <TextInput
-          placeholder="Search by any field"
-          mb="md"
-          leftSection={<IconSearch size={16} stroke={1.5} />}
-          value={search}
-          onChange={(event)=>setSearch(event.currentTarget.value)}
-        /> 
-        <Table withTableBorder highlightOnHover stickyHeader stickyHeaderOffset={60} >
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Item</Table.Th>
-              <Table.Th>Description</Table.Th>
-              <Table.Th>Count</Table.Th>
-              <Table.Th>Categories</Table.Th>
-              <Table.Th>Sub-Categories</Table.Th>
-              <Table.Th>Current Location</Table.Th>
-              <Table.Th>Permanent Home</Table.Th>
-              <Table.Th>Last Updated</Table.Th>
-              <Table.Th>Last Updated By</Table.Th>
-              <Table.Th>Notes</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody style = {{ fontSize: "13px"}}>{rows}</Table.Tbody>
-        </Table>
-      </Table.ScrollContainer>
-    </div>
-  );
-}
-
-const links = [
-  { link: '#', label: 'Report Issue' },
-  { link: '#', label: 'Request Item' },
-  { link: '#', label: "Scotch'n'Soda Home" },
-];
-
-export function FooterSimple() {
-  const items = links.map((link) => (
-    <Anchor<'a'>
-      c="dimmed"
-      key={link.label}
-      href={link.link}
-      onClick={(event) => event.preventDefault()}
-      size="sm"
-    >
-      {link.label}
-    </Anchor>
-  ));
-
-  return (
-    <footer className={classes.footer}>
-      <Container className={classes.inner}>
-        <p style = {{ fontSize: '12px' }}> Built and mainted by Will & Madison</p>
-        <Group className={classes.links}>{items}</Group>
-      </Container>
-    </footer>
-  );
-}
-
-function Admin({
-  username
-}: {
-  username: string
-}) {
-  const {mutate: createUser} = client.useMutation(
-    'post', '/',
-
-  )
-  return <Button
-          variant="filled"
-          color="grape" 
-          radius="lg"
-          size="compact-sm"
-          onClick={async () => {
-            await createUser({
-              body: {
-                username,
-            }
-            })
-          }}
-        >
-        Admin Login
-        </Button>
-}
-
-
-export default function App() {
-  const queryClient = new QueryClient();
+function BaseProvider() {
   return (
     <MantineProvider>
       <QueryClientProvider client={queryClient}>
-        <Stack style={{ flex: 1 }}>
-          <div style = {{ display: "flex",
-                          alignItems: "center",
-                          width: "90%",
-                          marginRight: "auto",
-                          marginLeft: "auto",
-                          marginTop: '30px',
-                          gap: "50px" }}>
-              <img src = {sns_logo} alt = "logo" width="150">
-              </img>
-
-              <div>
-                <h2 style = {{ color: "black", fontSize: '32px'}}> Scotch'n'Soda Shop Inventory</h2>
-              </div>
-
-              <div style={{ marginLeft: "auto" }}>
-                <Admin username="admin"></Admin>
-                <p style={{ fontSize: '12px', 
-                            maxWidth: '300px', 
-                            marginTop: '10px',
-                            minWidth: 0 }}>
-                 If you are a TAH looking to add or remove an item, please log in as admin.
-                </p>
-              </div>
-          </div>
-
-          <div style = {{ display: "flex",
-                          alignItems: "center",
-                          width: "95%",
-                          marginRight: "auto",
-                          marginLeft: "auto",
-                          marginTop: '70px',
-                          gap: "30px" }}>
-            <InventoryPublic></InventoryPublic>
-          </div>
-          <SatisDropzone/>
-
-
-        </Stack>
-        <FooterSimple></FooterSimple>
+        <Outlet />
       </QueryClientProvider>
     </MantineProvider>
-  )
+  );
 }
+
+const router = createBrowserRouter([
+  {
+    Component: BaseProvider,
+    children: [
+      { index: true, path: "/", Component: PublicTable },
+      {
+        path: "/admin",
+        Component: AdminProvider,
+        children: [{ path: "", Component: AdminPage }],
+      },
+    ],
+  },
+]);
+const App = () => <RouterProvider router={router} />;
+
+export default App;

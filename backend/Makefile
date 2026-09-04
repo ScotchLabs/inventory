@@ -16,3 +16,13 @@ spec:
 
 generate-fixtures:
 	python3 -m app.scripts.fixtures
+
+format:
+	ruff format .
+
+check:
+	ruff check
+
+fix:
+	ruff format .
+	ruff check --fix

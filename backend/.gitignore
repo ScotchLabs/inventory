@@ -1,6 +1,7 @@
 __pycache__/
 build/
 dist/
+.ruff_cache/
 .venv
 
 # for localdev
@@ -16,4 +17,3 @@ dist/
 .env
 .env.local
 .env.*.local
-

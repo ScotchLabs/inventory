@@ -1,5 +1,7 @@
 import json
+
 from fastapi.openapi.utils import get_openapi
+
 from app.app import app
 
 

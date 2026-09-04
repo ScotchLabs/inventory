@@ -1,22 +1,21 @@
 from typing import TYPE_CHECKING
+
+from sqlalchemy import Integer, Text
+from sqlalchemy.orm import Mapped, mapped_column
+
 from app.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, Text, Numeric
+
 
 if TYPE_CHECKING:
-    from app.inventory.models.asset import Asset
+    pass
+
 
 class Category(Base):
     __tablename__ = "categories"
 
-    id: Mapped[int] = mapped_column(
-        Integer,
-        primary_key=True
-    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
-    name: Mapped[str] = mapped_column(
-        Text,
-    )
+    name: Mapped[str] = mapped_column(Text, unique=True, index=True)
 
     classification: Mapped[str] = mapped_column(
         Text,

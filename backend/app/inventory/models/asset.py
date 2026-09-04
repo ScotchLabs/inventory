@@ -1,46 +1,36 @@
-from typing import TYPE_CHECKING
-from app.db.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, Text, ForeignKey, Numeric, DateTime, Table, Column
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
+from typing import TYPE_CHECKING
+
+from sqlalchemy import DateTime, ForeignKey, Integer, Numeric, Text
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.db.base import Base
+
 
 if TYPE_CHECKING:
-    from app.inventory.models.category import Category
+    pass
+
 
 class AssetCategoryMap(Base):
     __tablename__ = "asset_categories"
-    id: Mapped[int] = mapped_column(
-        Integer,
-        primary_key=True
-    )
-    asset_id: Mapped[int] = mapped_column(
-        ForeignKey("assets.id")
-    ) 
-    category_id: Mapped[int] = mapped_column(
-        ForeignKey("categories.id")
-    ) 
-    type: Mapped[str] = mapped_column(
-        Text
-    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    asset_id: Mapped[int] = mapped_column(ForeignKey("assets.id"))
+    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
+    type: Mapped[str] = mapped_column(Text)
 
 
 class Asset(Base):
     __tablename__ = "assets"
 
-    id: Mapped[int] = mapped_column(
-        Integer,
-        primary_key=True
-    )
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
     file_id: Mapped[int | None] = mapped_column(
         ForeignKey("files.id"),
         nullable=True,
     )
 
-    name: Mapped[str] = mapped_column(
-        Text,
-    )
+    name: Mapped[str] = mapped_column(Text, unique=True, index=True)
 
     name_verbose: Mapped[str] = mapped_column(
         Text,
@@ -60,7 +50,7 @@ class Asset(Base):
     )
 
     last_updated: Mapped[datetime] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
     )
 
     last_updated_by: Mapped[int | None] = mapped_column(

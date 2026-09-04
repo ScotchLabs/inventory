@@ -53,5 +53,3 @@ async def files_upload(
             for satis_file in to_return
         ]
     )
-
-

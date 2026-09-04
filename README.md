@@ -26,6 +26,7 @@ To run the backend in terminal:
 ```
 4. if you made changes since last time (?) then migrate:
 ``` bash
+    make db-migrate
     uv run alembic upgrade head
 ```
 
@@ -36,7 +37,6 @@ To run the backend in terminal:
    Remove the reload flag if you'd like to stop the server from refreshing for file changes
 
 6. To interact, use curl (changing the values in the json)
->>>>>>> refs/remotes/origin/main
 ``` bash
     curl -X POST http://localhost:8000/ -H "Content-Type: application/json" -d '{"username":"test"}'
 ```
@@ -65,6 +65,20 @@ To look at the frontend (cd into the folder):
 ```
 Type q to exit. 
 Have the sql running to make sure the two are working together as expected
+
+
+## Additional scripts
+### Frontend
+- `make spec` to sync openapi schema from backend to frontend
+- `npm run format` to format with `prettier` & `npm run lint:fix` to lint
+
+### Backend
+- `make spec` to rewrite the openapi spec to `backend/dist/openapi`
+- `make format` to format using `ruff`
+- `make check` to lint using `ruff`
+- `make fix` to format + lint fix whatever you can.
+  - If trying to configure mappers, you can use  `# noqa` for wildcard imports
+
 
 ## TODO
 
