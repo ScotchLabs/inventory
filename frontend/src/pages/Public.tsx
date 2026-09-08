@@ -253,7 +253,7 @@ export function Inventory(admin:boolean) {
 
   return (
     <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-      <div style={{ width: "100%", maxWidth: "1200px", paddingLeft: "20px", paddingRight: "20px" }}>
+      <div style={{ width: "90%", marginLeft: "5%", marginRight: "5%" }}>
         <TextInput
             placeholder="Search by any field"
             mb="md"

@@ -64,7 +64,7 @@ function MultiSelectWithObjects<T extends { id: number }>({
   onBlur?: () => void
   label?: string
   placeholder?: string
-  error?: string | null
+  error?: string | false | null
 }) {
   const mappedData = useMemo(
     () => new Map(data.map((item) => [item.id.toString(), item])),
@@ -386,7 +386,7 @@ export function AddUpdateItem({ onSubmit, initialValues, id
             }}
             searchable
             clearable
-            error={form.isTouched.permanent_location ? form.errors.permanent_location : null}
+            error={typeof form.errors.permanent_location === 'string' ? form.errors.permanent_location : null}
           />
           <AddNewLocation></AddNewLocation>
 
@@ -395,11 +395,11 @@ export function AddUpdateItem({ onSubmit, initialValues, id
             getItemLabel={(cat) => cat.name}
             value={form.values.categories}
             onChange={(selected) => form.setFieldValue('categories', selected)}
-            onFocus={() => form.setTouched({...form.isTouched, categories:true})}
-            onBlur={() => form.setTouched({...form.isTouched, categories:true})}
+            onFocus={() => {}}
+            onBlur={() => {}}
             label="Categories"
             placeholder="Select categories"
-            error={form.isTouched.categories ? form.errors.categories : null}
+            error={typeof form.errors.categories === 'string' ? form.errors.categories : null}
           />
           <AddNewCategory type='primary'></AddNewCategory>
 
@@ -408,11 +408,11 @@ export function AddUpdateItem({ onSubmit, initialValues, id
             getItemLabel={(cat) => cat.name}
             value={form.values.sub_categories}
             onChange={(selected) => form.setFieldValue('sub_categories', selected)}
-            onFocus={() => form.setTouched({...form.isTouched, sub_categories:true})}
-            onBlur={() => form.setTouched({...form.isTouched, sub_categories:true})}
+            onFocus={() => {}}
+            onBlur={() => {}}
             label="Sub Categories"
             placeholder="Select sub-categories"
-            error={form.isTouched.sub_categories ? form.errors.sub_categories : null}
+            error={typeof form.errors.sub_categories === 'string' ? form.errors.sub_categories : null}
           />
           <AddNewCategory type='secondary'></AddNewCategory>
 
