@@ -54,6 +54,7 @@ function MultiSelectWithObjects<T extends { id: number }>({
   onBlur,
   label,
   placeholder,
+  error,
 }: {
   data: T[]
   getItemLabel: (_: T) => string
@@ -63,6 +64,7 @@ function MultiSelectWithObjects<T extends { id: number }>({
   onBlur?: () => void
   label?: string
   placeholder?: string
+  error?: string | null
 }) {
   const mappedData = useMemo(
     () => new Map(data.map((item) => [item.id.toString(), item])),
@@ -90,6 +92,7 @@ function MultiSelectWithObjects<T extends { id: number }>({
       onFocus={onFocus}
       onBlur={onBlur}
       searchable
+      error={error}
     />
   )
 }
@@ -383,6 +386,7 @@ export function AddUpdateItem({ onSubmit, initialValues, id
             }}
             searchable
             clearable
+            error={form.isTouched.permanent_location ? form.errors.permanent_location : null}
           />
           <AddNewLocation></AddNewLocation>
 
@@ -395,6 +399,7 @@ export function AddUpdateItem({ onSubmit, initialValues, id
             onBlur={() => form.setTouched({...form.isTouched, categories:true})}
             label="Categories"
             placeholder="Select categories"
+            error={form.isTouched.categories ? form.errors.categories : null}
           />
           <AddNewCategory type='primary'></AddNewCategory>
 
@@ -407,6 +412,7 @@ export function AddUpdateItem({ onSubmit, initialValues, id
             onBlur={() => form.setTouched({...form.isTouched, sub_categories:true})}
             label="Sub Categories"
             placeholder="Select sub-categories"
+            error={form.isTouched.sub_categories ? form.errors.sub_categories : null}
           />
           <AddNewCategory type='secondary'></AddNewCategory>
 
