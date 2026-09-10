@@ -17,7 +17,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /opt/inventory
-            git pull origin main
+            git reset --hard origin/main
 
             # Build backend
             docker build --no-cache -t sns-inventory-backend:latest ./backend
