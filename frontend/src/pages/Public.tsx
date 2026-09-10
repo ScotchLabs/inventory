@@ -308,11 +308,6 @@ export function FooterSimple() {
       c="dimmed"
       key={link.label}
       href={link.link}
-      onClick={(event) => {
-        if (!link.link.startsWith('http') && !link.link.startsWith('mailto:')) {
-          event.preventDefault();
-        }
-      }}
       size="sm"
     >
       {link.label}
