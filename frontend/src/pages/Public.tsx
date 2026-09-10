@@ -298,8 +298,8 @@ export const variantColorResolver = (input: any) => {
 };
 
 const links = [
-  { link: "#", label: "Request Item" },
-  { link: "#", label: "Scotch'n'Soda Home" },
+  { link: "mailto:snstheatre.tc@gmail.com?subject=SNS%20Inventory%Item%Request", label: "Request Item" },
+  { link: "https://www.snstheatre.org/", label: "Scotch'n'Soda Home" },
 ];
 
 export function FooterSimple() {
@@ -308,7 +308,11 @@ export function FooterSimple() {
       c="dimmed"
       key={link.label}
       href={link.link}
-      onClick={(event) => event.preventDefault()}
+      onClick={(event) => {
+        if (!link.link.startsWith('http') && !link.link.startsWith('mailto:')) {
+          event.preventDefault();
+        }
+      }}
       size="sm"
     >
       {link.label}
