@@ -317,6 +317,7 @@ export function AddUpdateItem({ onSubmit, initialValues, id
         name_verbose: (value) => (!value ? 'Description is required' : null),
         quantity: (value) => (value < 1 ? 'Quantity must be at least 1' : null),
         current_location: (value) => (!value ? 'Current location is required' : null),
+        permanent_location: (value) => (!value ? 'Permanent location is required' : null),
         categories: (value) => (!value || value.length === 0 ? 'Must list at least one category' : null),
         sub_categories: (value) => (!value || value.length === 0 ? 'Must list at least one sub-category' : null),
       },
