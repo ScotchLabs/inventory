@@ -330,7 +330,7 @@ export function FooterSimple() {
 
 function Admin() {
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8000/users/auth/google/login";
+    window.location.href = `${window.location.origin}/users/auth/google/login`;
   };
 
   return <Button variant="default" color = "rgba(0, 0, 0, 1)" onClick={handleGoogleLogin}>Sign in with Google</Button>;

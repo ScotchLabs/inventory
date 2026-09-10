@@ -65,7 +65,7 @@ export function FooterSimple() {
 
 function Logout() {
   const handleLogout = () => {
-    window.location.href = "http://localhost:8000/users/auth/logout";
+    window.location.href = `${window.location.origin}/users/auth/logout`;
   };
   return <Button variant="default" color="rgba(0, 0, 0, 1)" onClick={handleLogout}>Logout</Button>;
 }
