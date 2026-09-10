@@ -17,15 +17,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /opt/inventory
+            git fetch origin
             git reset --hard origin/main
-
-            # Build backend
             docker build --no-cache -t sns-inventory-backend:latest ./backend
-
-            # Build frontend
             docker build --no-cache -t sns-inventory-frontend:latest ./frontend
-
-            # Restart services
             sudo systemctl restart app-compose.service
 
             echo "Deployment complete!"
