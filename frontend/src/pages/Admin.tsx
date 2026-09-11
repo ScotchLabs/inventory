@@ -33,8 +33,7 @@ export function AdminProvider() {
 }
 
 const links = [
-  { link: "#", label: "Request Item" },
-  { link: "#", label: "Scotch'n'Soda Home" },
+  { link: "https://www.snstheatre.org/", label: "Scotch'n'Soda Home" },
 ];
 
 export function FooterSimple() {
@@ -43,7 +42,6 @@ export function FooterSimple() {
       c="dimmed"
       key={link.label}
       href={link.link}
-      onClick={(event) => event.preventDefault()}
       size="sm"
     >
       {link.label}
