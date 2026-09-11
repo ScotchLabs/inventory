@@ -50,6 +50,8 @@ services:
   frontend:
     build:
       context: frontend/
+      args:
+        VITE_API_URL: ${API_ROOT_URL}
     image: sns-inventory-frontend:latest
     container_name: frontend
     restart: unless-stopped
