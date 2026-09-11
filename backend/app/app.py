@@ -1,18 +1,17 @@
-from sqlalchemy import insert
-from pydantic import BaseModel
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 
-from app.db import sync_db_connection_context, db
+from app.db import sync_db_connection_context
 from app.extensions.all_models import *  # noqa
-from app.inventory.routes import router as inventory_router
 from app.files.routes import router as files_router
+from app.inventory.routes import router as inventory_router
 from app.users.routes import router as users_router
 from app.users.services.auth import NotAuthorizedException
 from app.utils.current_request import current_request_context
 from app.utils.environment import SNSDeploymentType, sns_environment
+
 
 app = FastAPI()
 
@@ -74,25 +73,3 @@ async def authorization_exception_handler(
 app.include_router(inventory_router)
 app.include_router(files_router)
 app.include_router(users_router)
-
-
-class UserCreateSchema(BaseModel):
-    username: str
-
-
-class UserDumpSchema(BaseModel):
-    id: int
-    username: str
-
-
-@app.post("/")
-async def create_user(body: UserCreateSchema) -> UserDumpSchema:
-    user = db.execute(
-        insert(User).values(username=body.username).returning(User)
-    ).scalar_one()
-    db.commit()
-
-    return UserDumpSchema(
-        id=user.id,
-        username=user.username,
-    )

@@ -23,6 +23,8 @@ services:
   backend:
     image: sns-inventory-backend:latest
     container_name: backend
+    build:
+      context: backend/
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://${postgres_user}:${postgres_password}@postgres:5432/${postgres_db}
@@ -41,6 +43,8 @@ services:
       - app-network
 
   frontend:
+    build:
+      context: frontend/
     image: sns-inventory-frontend:latest
     container_name: frontend
     restart: unless-stopped

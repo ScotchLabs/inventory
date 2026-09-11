@@ -7,7 +7,7 @@ import {
   Text,
 } from "@mantine/core";
 import { IconUpload, IconX, IconPhoto } from "@tabler/icons-react";
-import "./App.css";
+import "../App.css";
 import { Dropzone, IMAGE_MIME_TYPE, type FileWithPath } from "@mantine/dropzone";
 import type { components } from "../api/schema";
 
