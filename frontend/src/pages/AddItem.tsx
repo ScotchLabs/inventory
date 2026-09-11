@@ -6,6 +6,7 @@ import { client } from "../api/client";
 import type { components } from "../api/schema";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDisclosure } from "@mantine/hooks";
+import { SatisDropzone } from "../components/Files";
 
 function EnsureLogin() {
   const { data: session } = client.useSuspenseQuery(
@@ -423,6 +424,8 @@ export function AddUpdateItem({ onSubmit, initialValues, id
             placeholder="Add any additional notes"
             rows={4}
             {...form.getInputProps('notes')}
+          />
+          <SatisDropzone
           />
 
           <Group justify="flex-end">

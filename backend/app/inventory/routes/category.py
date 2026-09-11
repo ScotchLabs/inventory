@@ -11,8 +11,9 @@ from app.inventory.schemas.category import (
 )
 
 from app.inventory.enums import CategoryClassification
+from app.utils.api_route import SatisAPIRouter, public_route
 
-router = APIRouter(
+router = SatisAPIRouter(
     prefix="/categories",
     responses={404: {"description": "Not found"}},
 )
@@ -46,6 +47,7 @@ async def create_location(body: CategoryCreateSchema) -> CategoryDumpSchema:
 
 
 @router.post("/list_primary")
+@public_route
 def list_primary_categories() -> CategoryListResponseSchema[CategoryDumpSchema]:
     query = select(Category).where(
         Category.classification == CategoryClassification.PRIMARY
@@ -58,6 +60,7 @@ def list_primary_categories() -> CategoryListResponseSchema[CategoryDumpSchema]:
 
 
 @router.post("/list_secondary")
+@public_route
 def list_secondary_categories() -> CategoryListResponseSchema[CategoryDumpSchema]:
     query = select(Category).where(
         Category.classification == CategoryClassification.SECONDARY

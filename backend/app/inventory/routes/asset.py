@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from sqlalchemy import select, or_, update
+from sqlalchemy import select, or_, update, func
 
 from app.db import db
 from app.inventory.models.asset import Asset, AssetCategoryMap
@@ -18,9 +18,10 @@ from app.inventory.schemas.asset import (
 )
 
 from app.inventory.enums import CategoryClassification
+from app.utils.api_route import SatisAPIRouter, public_route
 
 
-router = APIRouter(
+router = SatisAPIRouter(
     prefix="/asset",
     responses={404: {"description": "Not found"}},
 )
@@ -80,6 +81,7 @@ def asset_to_dump_schema(asset: Asset) -> AssetDumpSchema:
 
 
 @router.post("/list")
+@public_route
 def list_assets(body: AssetSearchParems) -> ListResponseSchema[AssetDumpSchema]:
     query = select(Asset)
 
@@ -126,9 +128,8 @@ def list_assets(body: AssetSearchParems) -> ListResponseSchema[AssetDumpSchema]:
 
 @router.post("/create")
 def create_asset(body: AssetCreateSchema) -> AssetDumpSchema:
-
     existing = db.execute(
-        select(Asset).where(Asset.name.strip().ilike(body.name))
+        select(Asset).where(func.trim(Asset.name).ilike(body.name))
     ).scalar_one_or_none()
 
     if existing:
@@ -176,6 +177,7 @@ def create_asset(body: AssetCreateSchema) -> AssetDumpSchema:
 
 
 @router.get("/get/{id}")
+@public_route
 def get_asset(id: int) -> AssetDumpSchema:
     asset = db.execute(select(Asset).where(Asset.id == id)).scalars().first()
 

@@ -1,4 +1,5 @@
 import { Fragment, useState } from "react";
+import { API_URL } from '../environment'
 import { client } from "../api/client";
 import { format } from 'date-fns';
 import { useDisclosure } from '@mantine/hooks';
@@ -329,7 +330,7 @@ export function FooterSimple() {
 
 function Admin() {
   const handleGoogleLogin = () => {
-    window.location.href = `${window.location.origin}/users/auth/google/login`;
+    window.location.href = `${API_URL}/users/auth/google/login`;
   };
 
   return <Button variant="default" color = "rgba(0, 0, 0, 1)" onClick={handleGoogleLogin}>Sign in with Google</Button>;

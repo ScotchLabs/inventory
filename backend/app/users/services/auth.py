@@ -2,12 +2,17 @@ import secrets
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
+from fastapi import HTTPException
+from fastapi.responses import RedirectResponse
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
 from app.db import db
 from app.users.models.token import Token
+from app.users.models.user import ADMIN_EMAILS, User
+from app.users.services.user import get_or_create_user_for_email, get_user_by_id
 from app.utils.current_request import get_current_request
+from app.utils.environment import SNSDeploymentType, sns_environment
 
 
 @dataclass
@@ -80,3 +85,45 @@ def create_token_for_user(user_id: int) -> Token:
         )
         .returning(Token)
     ).scalar_one()
+
+
+def localdev_login(email: str):
+    if sns_environment.deployment_type != SNSDeploymentType.LOCALDEV:
+        raise RuntimeError("Not in localdev")
+
+    user = get_or_create_user_for_email(email)
+    sns_token = create_token_for_user(user.id)
+
+    response = RedirectResponse(url=f"{sns_environment.web_root_url}/admin")
+
+    response.set_cookie(
+        key="public_token",
+        value=encode_public_token(
+            DecodedPublicToken(public=sns_token.public, token=sns_token.token)
+        ),
+        httponly=True,
+        secure=sns_environment.deployment_type != SNSDeploymentType.LOCALDEV,
+        samesite="lax",
+        max_age=3600,
+    )
+    return response
+
+
+async def requires_user():
+    if get_current_user_or_none() is None:
+        raise HTTPException(
+            status_code=401,
+        )
+
+
+def get_current_user() -> User:
+    token = get_current_valid_token()
+    return get_user_by_id(token.user_id)
+
+
+def get_current_user_or_none() -> User | None:
+    token = get_current_valid_token_or_none()
+    if token is None:
+        return None
+    else:
+        return get_user_by_id(token.user_id)

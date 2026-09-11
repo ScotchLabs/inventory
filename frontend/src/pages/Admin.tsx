@@ -1,4 +1,5 @@
 import { Skeleton, Stack, Group, Container, Anchor, Button, Modal, MantineProvider } from "@mantine/core";
+import { API_URL } from '../environment'
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, Suspense, Fragment } from "react";
 import { useNavigate, Outlet } from "react-router";
@@ -63,7 +64,7 @@ export function FooterSimple() {
 
 function Logout() {
   const handleLogout = () => {
-    window.location.href = `${window.location.origin}/users/auth/logout`;
+    window.location.href = `${API_URL}/users/auth/logout`;
   };
   return <Button variant="default" color="rgba(0, 0, 0, 1)" onClick={handleLogout}>Logout</Button>;
 }

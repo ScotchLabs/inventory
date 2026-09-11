@@ -9,14 +9,16 @@ from app.users.services.auth import (
 )
 from app.users.services.user import get_user_by_id
 
+from app.utils.api_route import SatisAPIRouter, public_route
 
-router = APIRouter(
+router = SatisAPIRouter(
     prefix="/users",
     responses={404: {"description": "Not found"}},
 )
 
 
 @router.get("/current-session")
+@public_route
 def current_session_get() -> CurrentSessionDumpSchema:
     token = get_current_valid_token_or_none()
     if token is None:

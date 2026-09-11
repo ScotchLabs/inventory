@@ -5,19 +5,23 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import RedirectResponse
 
 from app.db import db
+from app.users.models.user import ADMIN_EMAILS, User
 from app.users.services.auth import (
     DecodedPublicToken,
     create_token_for_user,
     encode_public_token,
+    get_current_valid_token,
+    get_current_valid_token_or_none,
+    localdev_login,
 )
-from app.users.services.user import get_or_create_user_for_email
-from app.users.models.user import ADMIN_EMAILS
+from app.users.services.user import get_or_create_user_for_email, get_user_by_id
+from app.utils.api_route import SatisAPIRouter, public_route
 from app.utils.environment import SNSDeploymentType, sns_environment
 
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(
+router = SatisAPIRouter(
     prefix="/auth",
     responses={404: {"description": "Not found"}},
 )
@@ -35,6 +39,7 @@ oauth.register(
 
 
 @router.get("/google/callback")
+@public_route
 async def callback(request: Request):
     try:
         token = await oauth.google.authorize_access_token(request)
@@ -43,7 +48,9 @@ async def callback(request: Request):
 
         # Check if email is in admin allowlist
         if email not in ADMIN_EMAILS:
-            raise HTTPException(status_code=403, detail="Access denied. Email not authorized.")
+            raise HTTPException(
+                status_code=403, detail="Access denied. Email not authorized."
+            )
 
         user = get_or_create_user_for_email(email)
         sns_token = create_token_for_user(user.id)
@@ -70,11 +77,17 @@ async def callback(request: Request):
 
 
 @router.get("/google/login")
+@public_route
 async def login(request: Request):
     try:
-        return await oauth.google.authorize_redirect(
-            request, f"{sns_environment.api_root_url}/users/auth/google/callback"
-        )
+        if sns_environment.deployment_type == SNSDeploymentType.LOCALDEV:
+            response= localdev_login("madisone@andrew.cmu.edu")
+            db.commit()
+            return response
+        else:
+            return await oauth.google.authorize_redirect(
+                request, f"{sns_environment.api_root_url}/users/auth/google/callback"
+            )
     except Exception as e:
         e.with_traceback(None)
         logger.exception(e)
@@ -82,6 +95,7 @@ async def login(request: Request):
 
 
 @router.get("/logout")
+@public_route
 async def logout(request: Request):
     response = RedirectResponse(url=f"{sns_environment.web_root_url}")
 
@@ -92,3 +106,5 @@ async def logout(request: Request):
     )
 
     return response
+
+

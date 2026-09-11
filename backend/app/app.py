@@ -5,6 +5,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.db import sync_db_connection_context
 from app.extensions.all_models import *  # noqa
+from app.files.routes import router as files_router
 from app.inventory.routes import router as inventory_router
 from app.users.routes import router as users_router
 from app.users.services.auth import NotAuthorizedException
@@ -70,4 +71,5 @@ async def authorization_exception_handler(
 
 
 app.include_router(inventory_router)
+app.include_router(files_router)
 app.include_router(users_router)

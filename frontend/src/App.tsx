@@ -1,12 +1,12 @@
+import "@mantine/core/styles.css";
+import "@mantine/dropzone/styles.css";
 import {
-  createBrowserRouter,
-  Outlet,
-  RouterProvider,
-} from "react-router";
+  MantineProvider,
+} from "@mantine/core";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router";
 import { PublicTable } from "./pages/Public";
-import { MantineProvider } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AdminPage, AdminProvider } from './pages/Admin'
+import { AdminPage, AdminProvider } from "./pages/Admin";
 
 const queryClient = new QueryClient();
 

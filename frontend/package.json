@@ -13,11 +13,13 @@
   },
   "dependencies": {
     "@mantine/core": "^9.4.1",
+    "@mantine/dropzone": "^9.4.1",
     "@mantine/form": "^9.5.2",
     "@mantine/hooks": "^9.4.1",
     "@phosphor-icons/react": "github:phosphor-icons/react",
     "@tabler/icons-react": "^3.45.0",
     "@tanstack/react-query": "^5.101.2",
+    "axios": "^1.18.1",
     "date-fns": "^4.4.0",
     "openapi-fetch": "^0.17.0",
     "openapi-react-query": "^0.5.4",

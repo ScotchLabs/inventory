@@ -18,6 +18,15 @@ services:
       retries: 5
     networks:
       - app-network
+  cdn:
+    image: python:3.11-slim
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./localdevuploads:/root/localdevuploads/
+    networks:
+      - app-network
+    entrypoint: python3 -m http.server 8001 -d /root/localdevuploads/
 
 volumes:
   db-data:
