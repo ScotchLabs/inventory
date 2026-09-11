@@ -26,7 +26,7 @@ async def files_list(
         elements=[
             FileDumpSchema(
                 id=satis_file.id,
-                url=f"http://localhost:8000/files/static/{satis_file.url}",
+                url=satis_file.url,
                 filename=satis_file.filename,
             )
             for satis_file in files

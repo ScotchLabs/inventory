@@ -1,3 +1,5 @@
+import boto3
+from botocore.exceptions import ClientError
 from typing import assert_never
 from sqlalchemy import insert, select
 
@@ -30,7 +32,36 @@ def save_file_production(
     contents: bytes,
     filename: str,
 ) -> tuple[str, str]:
-    raise NotImplementedError
+    """Upload file to S3 and return (system_filename, public_url)"""
+    if not sns_environment.aws_s3_bucket_name:
+        raise ValueError("AWS_S3_BUCKET_NAME environment variable not set")
+
+    system_filename = f"{make_slug()}-{filename}"
+
+    try:
+        s3_client = boto3.client(
+            "s3",
+            region_name=sns_environment.aws_s3_region,
+            aws_access_key_id=sns_environment.aws_access_key_id,
+            aws_secret_access_key=sns_environment.aws_secret_access_key,
+        )
+
+        # Upload to S3
+        s3_client.put_object(
+            Bucket=sns_environment.aws_s3_bucket_name,
+            Key=f"uploads/{system_filename}",
+            Body=contents,
+        )
+
+        # Generate public URL
+        url = f"https://{sns_environment.aws_s3_bucket_name}.s3.{sns_environment.aws_s3_region}.amazonaws.com/uploads/{system_filename}"
+
+        return system_filename, url
+
+    except ClientError as e:
+        raise RuntimeError(f"Failed to upload file to S3: {e}")
+    except Exception as e:
+        raise RuntimeError(f"Unexpected error uploading to S3: {e}")
 
 
 def handle_file_upload(
@@ -44,7 +75,7 @@ def handle_file_upload(
             filename=resolved_filename,
         )
     elif sns_environment.deployment_type == SNSDeploymentType.PRODUCTION:
-        system_filename, url = save_file_local(
+        system_filename, url = save_file_production(
             contents=contents,
             filename=resolved_filename,
         )
