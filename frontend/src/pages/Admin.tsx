@@ -42,8 +42,7 @@ export function AdminProvider() {
 }
 
 const links = [
-  { link: "#", label: "Request Item" },
-  { link: "#", label: "Scotch'n'Soda Home" },
+  { link: "https://www.snstheatre.org/", label: "Scotch'n'Soda Home" },
 ];
 
 export function FooterSimple() {
@@ -52,7 +51,6 @@ export function FooterSimple() {
       c="dimmed"
       key={link.label}
       href={link.link}
-      onClick={(event) => event.preventDefault()}
       size="sm"
     >
       {link.label}
@@ -74,7 +72,7 @@ export function FooterSimple() {
 
 function Logout() {
   const handleLogout = () => {
-    window.location.href = "http://localhost:8000/users/auth/logout";
+    window.location.href = `${window.location.origin}/users/auth/logout`;
   };
   return (
     <Button variant="default" color="rgba(0, 0, 0, 1)" onClick={handleLogout}>
@@ -223,10 +221,9 @@ export function InventoryTable() {
           <div
             style={{
               display: "flex",
+              justifyContent: "center",
               alignItems: "center",
-              width: "95%",
-              marginRight: "auto",
-              marginLeft: "auto",
+              width: "100%",
               marginTop: "70px",
               gap: "30px",
             }}

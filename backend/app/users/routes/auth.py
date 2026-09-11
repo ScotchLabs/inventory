@@ -11,6 +11,7 @@ from app.users.services.auth import (
     encode_public_token,
 )
 from app.users.services.user import get_or_create_user_for_email
+from app.users.models.user import ADMIN_EMAILS
 from app.utils.environment import SNSDeploymentType, sns_environment
 
 
@@ -39,6 +40,10 @@ async def callback(request: Request):
         token = await oauth.google.authorize_access_token(request)
         user_info = token.get("userinfo")
         email = user_info["email"]
+
+        # Check if email is in admin allowlist
+        if email not in ADMIN_EMAILS:
+            raise HTTPException(status_code=403, detail="Access denied. Email not authorized.")
 
         user = get_or_create_user_for_email(email)
         sns_token = create_token_for_user(user.id)

@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+import functools
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
@@ -24,7 +26,6 @@ def get_current_user_or_none() -> User | None:
         return None
     else:
         return get_user_by_id(token.user_id)
-
 
 def get_or_create_user_for_email(email: str) -> User:
     db.execute(

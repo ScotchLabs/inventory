@@ -22,3 +22,4 @@ def current_request_context(request: Request) -> Generator[Request]:
         yield request
     finally:
         _request_ctx.reset(previous_request)
+

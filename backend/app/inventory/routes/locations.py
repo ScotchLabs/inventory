@@ -23,7 +23,7 @@ def location_to_dump_schema(location: Location) -> LocationDumpSchema:
 @router.post("/create")
 async def create_location(body: LocationCreateSchema) -> LocationDumpSchema:
     existing = db.execute(
-        select(Location).where(Location.name.ilike(body.name))
+        select(Location).where(Location.name.ilike(body.name.strip()))
     ).scalar_one_or_none()
 
     if existing:
@@ -32,7 +32,7 @@ async def create_location(body: LocationCreateSchema) -> LocationDumpSchema:
         )
 
     location = db.execute(
-        insert(Location).values(name=body.name).returning(Location)
+        insert(Location).values(name=body.name.strip()).returning(Location)
     ).scalar_one()
     db.commit()
 

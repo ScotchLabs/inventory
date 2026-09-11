@@ -34,12 +34,12 @@ cp /home/ec2-user/.docker/config.json /root/.docker/config.json
 chown -R ec2-user:ec2-user /home/ec2-user/.docker
 
 # ---- Mount EFS ----
-mkdir -p /mnt/efs/postgres-data
+mkdir -p /mnt/efs/postgres-data /mnt/efs/letsencrypt /mnt/efs/certbot
 if ! grep -q "${efs_id}" /etc/fstab; then
   echo "${efs_id}:/ /mnt/efs efs _netdev,tls,iam 0 0" >> /etc/fstab
 fi
 mount -a -t efs || mount -t efs -o tls,iam "${efs_id}:/" /mnt/efs
-mkdir -p /mnt/efs/postgres-data
+mkdir -p /mnt/efs/postgres-data /mnt/efs/letsencrypt /mnt/efs/certbot
 chown -R 999:999 /mnt/efs/postgres-data  # postgres container user
 
 # ---- App directory ----
@@ -66,6 +66,7 @@ GOOGLE_OAUTH_CLIENT_SECRET=$(echo "$SECRET_JSON" | jq -r '.google_oauth_client_s
 WEB_ROOT_URL=$(echo "$SECRET_JSON" | jq -r '.web_root_url')
 API_ROOT_URL=$(echo "$SECRET_JSON" | jq -r '.api_root_url')
 FASTAPI_SESSION_SECRET=$(echo "$SECRET_JSON" | jq -r '.fastapi_session_secret')
+DOMAIN_NAME=$(echo "$SECRET_JSON" | jq -r '.domain_name')
 
 # Create .env file
 cat > /opt/inventory/.env <<ENVEOF
@@ -77,6 +78,7 @@ GOOGLE_OAUTH_CLIENT_SECRET=$GOOGLE_OAUTH_CLIENT_SECRET
 WEB_ROOT_URL=$WEB_ROOT_URL
 API_ROOT_URL=$API_ROOT_URL
 FASTAPI_SESSION_SECRET=$FASTAPI_SESSION_SECRET
+DOMAIN=$DOMAIN_NAME
 ENVEOF
 
 # Fix permissions - the .env file contains secrets

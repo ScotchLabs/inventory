@@ -12,6 +12,9 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, Suspense, useMemo } from "react";
+import { Skeleton, TextInput, NumberInput, MultiSelect, Select, Textarea, Button, Group, Loader, Modal, Notification } from "@mantine/core";
+import { useForm, } from "@mantine/form";
+import { useEffect, Suspense, useMemo, useState } from "react";
 import { useNavigate, Outlet } from "react-router";
 import { client } from "../api/client";
 import type { components } from "../api/schema";
@@ -65,15 +68,17 @@ function MultiSelectWithObjects<T extends { id: number }>({
   onBlur,
   label,
   placeholder,
+  error,
 }: {
-  data: T[];
-  getItemLabel: (_: T) => string;
-  value: T[];
-  onChange: (items: T[]) => void;
-  onFocus?: () => void;
-  onBlur?: () => void;
-  label?: string;
-  placeholder?: string;
+  data: T[]
+  getItemLabel: (_: T) => string
+  value: T[]
+  onChange: (items: T[]) => void
+  onFocus?: () => void
+  onBlur?: () => void
+  label?: string
+  placeholder?: string
+  error?: string | false | null
 }) {
   const mappedData = useMemo(
     () => new Map(data.map((item) => [item.id.toString(), item])),
@@ -101,229 +106,210 @@ function MultiSelectWithObjects<T extends { id: number }>({
       onFocus={onFocus}
       onBlur={onBlur}
       searchable
+      error={error}
     />
   );
 }
 
-export function AddNewCategory({ type }: { type: string }) {
-  const { data: categories } =
-    type === "primary"
-      ? client.useQuery("post", "/inventory/categories/list_primary")
-      : client.useQuery("post", "/inventory/categories/list_secondary");
-  const form_inner = useForm({
-    mode: "uncontrolled",
-    initialValues: { category_name: "" },
-    validate: {
-      category_name: (value) =>
-        value.length < 2
-          ? "Category name must be at least two characters"
-          : (categories?.categories ?? []).some(
-                (cat) =>
-                  cat.name.toLowerCase().trim() === value.toLowerCase().trim(),
-              )
-            ? "Category name already exists"
-            : null,
-    },
-  });
-  const [opened_inner, { open, close }] = useDisclosure(false);
-  const queryClient = useQueryClient();
+export function AddNewCategory({type} : {type : string}) {
+    const { data: categories } = (type === "primary") ? client.useQuery("post", "/inventory/categories/list_primary") : client.useQuery("post", "/inventory/categories/list_secondary");
+    const form_inner = useForm ({
+        mode: 'uncontrolled',
+        initialValues: {category_name: ""},
+        validate: {
+            category_name: (value) => (value.length < 2 ? 'Category name must be at least two characters' :
+                                       (categories?.categories ?? []).some(cat => cat.name.toLowerCase().trim() === value.toLowerCase().trim()) ? 'Category name already exists' : null)
+        }
+    })
+    const [opened_inner, { open, close }] = useDisclosure(false);
+    const [error, setError] = useState<string | null>(null);
+    const queryClient = useQueryClient();
 
-  const { mutateAsync: handleAdd } = client.useMutation(
-    "post",
-    "/inventory/categories/create",
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ["post", "/inventory/categories/list_primary"],
-          exact: false,
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["post", "/inventory/categories/list_secondary"],
-          exact: false,
-        });
-        close();
-      },
-    },
-  );
+    const { mutateAsync: handleAdd } = client.useMutation(
+            'post',
+            '/inventory/categories/create',
+            {
+              onSuccess: () => {
+                queryClient.invalidateQueries({
+                  queryKey: ["post", '/inventory/categories/list_primary'],
+                  exact: false
+                });
+                queryClient.invalidateQueries({
+                  queryKey: ["post", '/inventory/categories/list_secondary'],
+                  exact: false
+                });
+                form_inner.reset();
+                form_inner.setFieldValue('category_name', '');
+                setError(null);
+                close()
+              }
+            }
+        );
 
-  const handleSubmit = form_inner.onSubmit(async (values) => {
-    try {
-      await handleAdd({
-        body: {
-          name: values.category_name,
-          classification: type.toUpperCase(),
-        },
-      });
-    } catch (error) {
-      console.error("Failed to add category:", error);
-      throw error;
-    }
-  });
+    const handleSubmit = form_inner.onSubmit(async (values ) => {
+      try {
+        setError(null);
+        await handleAdd({
+          body: {
+            name: values.category_name,
+            classification: type.toUpperCase()
+          }
+        })
+      } catch (error: any) {
+        const errorMessage = error?.response?.data?.detail || error?.message || 'Failed to add category';
+        setError(errorMessage);
+        console.error('Failed to add category:', error);
+      }
+    });
 
-  return (
-    <>
-      <Modal
-        centered={true}
-        size="auto"
-        opened={opened_inner}
-        onClose={close}
-        withCloseButton={false}
-        radius={0}
-        transitionProps={{ transition: "fade", duration: 200 }}
-      >
-        <div onClick={(e) => e.stopPropagation()}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleSubmit(e);
-            }}
-          >
-            <TextInput
-              label="New Category Name"
-              {...form_inner.getInputProps("category_name")}
-            />
+    return (
+        <>
+            <Modal
+                    centered={true}
+                    size="auto"
+                    opened={opened_inner}
+                    onClose={close}
+                    withCloseButton={false}
+                    radius={0}
+                    transitionProps={{ transition: 'fade', duration: 200 }}
+                ><div onClick={(e) => e.stopPropagation()}>
+                    {error && <Notification title="Error" color="red" onClose={() => setError(null)}>{error}</Notification>}
+                    <form onSubmit={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleSubmit(e);
+                    }} >
 
-            <Group justify="flex-end">
-              <Button
-                type="submit"
-                variant="light"
-                color="rgba(28, 61, 145, 1)"
-                disabled={form_inner.submitting}
-                rightSection={
-                  form_inner.submitting ? <Loader size={16} /> : null
-                }
-              >
-                {form_inner.submitting ? "Updating..." : "Submit"}
-              </Button>
-            </Group>
-          </form>
-        </div>
-      </Modal>
-      <Button
-        variant="default"
-        radius="lg"
-        color="rgba(0, 0, 0, 1)"
-        size="compact-xs"
-        p={3}
-        styles={{ section: { marginRight: "3px" } }}
-        onClick={(e) => {
-          e.stopPropagation();
-          open();
-        }}
-      >
-        Add New
-      </Button>
-    </>
-  );
+                        <TextInput
+                            label="New Category Name"
+                            {...form_inner.getInputProps('category_name')}
+                        />
+
+                        <Group justify="flex-end">
+                            <Button
+                            type="submit"
+                            variant="light"
+                            color="rgba(28, 61, 145, 1)"
+                            disabled={form_inner.submitting || !form_inner.isDirty()}
+                            rightSection={form_inner.submitting? <Loader size={16} /> : null}
+                            >
+                            {form_inner.submitting? 'Updating...' : 'Submit'}
+                            </Button>
+                        </Group>
+                        </form>
+                </div>
+            </Modal>
+            <Button variant="default"
+                    radius="lg"
+                    color="rgba(0, 0, 0, 1)"
+                    size="compact-xs"
+                    p={3}
+                    styles={{section:{ marginRight: '3px' }}}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      open();
+                    }}>
+            Add New</Button>
+        </>
+    )
 }
 
 export function AddNewLocation() {
-  const { data: locations } = client.useQuery(
-    "post",
-    "/inventory/locations/list",
-  );
-  const form_inner = useForm({
-    mode: "uncontrolled",
-    initialValues: { location_name: "" },
-    validate: {
-      location_name: (value) =>
-        value.length < 2
-          ? "Location name must be at least two characters"
-          : (locations?.locations ?? []).some(
-                (loc) =>
-                  loc.name.toLowerCase().trim() === value.toLowerCase().trim(),
-              )
-            ? "Location name already exists"
-            : null,
-    },
-  });
-  const [opened_inner, { open, close }] = useDisclosure(false);
-  const queryClient = useQueryClient();
+    const { data: locations } = client.useQuery("post", "/inventory/locations/list");
+    const form_inner = useForm ({
+        mode: 'uncontrolled',
+        initialValues: {location_name: ""},
+        validate: {
+            location_name: (value) => (value.length < 2 ? 'Location name must be at least two characters' :
+                                        (locations?.locations ?? []).some(loc => loc.name.toLowerCase().trim() === value.toLowerCase().trim()) ? 'Location name already exists' : null)
+        }
+    })
+    const [opened_inner, { open, close }] = useDisclosure(false);
+    const [error, setError] = useState<string | null>(null);
+    const queryClient = useQueryClient();
 
-  const { mutateAsync: handleAdd } = client.useMutation(
-    "post",
-    "/inventory/locations/create",
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ["post", "/inventory/locations/list"],
-          exact: false,
-        });
-        close();
-      },
-    },
-  );
+    const { mutateAsync: handleAdd } = client.useMutation(
+            'post',
+            '/inventory/locations/create',
+            {
+              onSuccess: () => {
+                queryClient.invalidateQueries({
+                  queryKey: ["post", '/inventory/locations/list'],
+                  exact: false
+                });
+                form_inner.reset();
+                form_inner.setFieldValue('location_name', '');
+                setError(null);
+                close()
+              }
+            }
+        );
 
-  const handleSubmit = form_inner.onSubmit(async (values) => {
-    try {
-      await handleAdd({
-        body: {
-          name: values.location_name,
-        },
-      });
-    } catch (error) {
-      console.error("Failed to add location:", error);
-      throw error;
-    }
-  });
+    const handleSubmit = form_inner.onSubmit(async ( values ) => {
+      try {
+        setError(null);
+        await handleAdd({
+          body: {
+            name: values.location_name,
+          }
+        })
+      } catch (error: any) {
+        const errorMessage = error?.response?.data?.detail || error?.message || 'Failed to add location';
+        setError(errorMessage);
+        console.error('Failed to add location:', error);
+      }
+    });
 
-  return (
-    <>
-      <Modal
-        centered={true}
-        size="auto"
-        opened={opened_inner}
-        onClose={close}
-        withCloseButton={false}
-        radius={0}
-        transitionProps={{ transition: "fade", duration: 200 }}
-      >
-        <div onClick={(e) => e.stopPropagation()}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleSubmit(e);
-            }}
-          >
-            <TextInput
-              label="New Permanent Location"
-              {...form_inner.getInputProps("location_name")}
-            />
+    return (
+        <>
+            <Modal
+                    centered={true}
+                    size="auto"
+                    opened={opened_inner}
+                    onClose={close}
+                    withCloseButton={false}
+                    radius={0}
+                    transitionProps={{ transition: 'fade', duration: 200 }}
+                ><div onClick={(e) => e.stopPropagation()}>
+                    {error && <Notification title="Error" color="red" onClose={() => setError(null)}>{error}</Notification>}
+                    <form onSubmit={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleSubmit(e);
+                    }} >
 
-            <Group justify="flex-end">
-              <Button
-                type="submit"
-                variant="light"
-                color="rgba(28, 61, 145, 1)"
-                disabled={form_inner.submitting}
-                rightSection={
-                  form_inner.submitting ? <Loader size={16} /> : null
-                }
-              >
-                {form_inner.submitting ? "Updating..." : "Submit"}
-              </Button>
-            </Group>
-          </form>
-        </div>
-      </Modal>
-      <Button
-        variant="default"
-        radius="lg"
-        color="rgba(0, 0, 0, 1)"
-        size="compact-xs"
-        p={3}
-        styles={{ section: { marginRight: "3px" } }}
-        onClick={(e) => {
-          e.stopPropagation();
-          open();
-        }}
-      >
-        Add New
-      </Button>
-    </>
-  );
+                        <TextInput
+                            label="New Permanent Location"
+                            {...form_inner.getInputProps('location_name')}
+                        />
+
+                        <Group justify="flex-end">
+                            <Button
+                            type="submit"
+                            variant="light"
+                            color="rgba(28, 61, 145, 1)"
+                            disabled={form_inner.submitting || !form_inner.isDirty()}
+                            rightSection={form_inner.submitting? <Loader size={16} /> : null}
+                            >
+                            {form_inner.submitting? 'Updating...' : 'Submit'}
+                            </Button>
+                        </Group>
+                        </form>
+                </div>
+            </Modal>
+            <Button variant="default"
+                    radius="lg"
+                    color="rgba(0, 0, 0, 1)"
+                    size="compact-xs"
+                    p={3}
+                    styles={{section:{ marginRight: '3px' }}}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      open();
+                    }}>
+            Add New</Button>
+        </>
+    )
 }
 
 export function AddUpdateItem({
@@ -373,10 +359,25 @@ export function AddUpdateItem({
     "/inventory/locations/list",
   );
 
-  const { data: categories } = client.useQuery(
-    "post",
-    "/inventory/categories/list_primary",
-  );
+  const { data: assets } = client.useQuery("post", "/inventory/asset/list", {body: { search: null }});
+  const form = useForm <AddUpdateItemFormValues> ({
+      mode: 'uncontrolled',
+      initialValues: initialValues,
+      validate: {
+        name: (value) => (!value ? 'Name is required' : 
+                          value.length > 15 ? 'Length of name must be less than 15 characters' : 
+                          (assets?.elements ?? []).some(
+                            asset => (asset.name.toLowerCase().trim() === value.toLowerCase().trim() &&
+                            (id === null ||
+                            asset.id !== id))) ? "Item name already exists" : null),
+        name_verbose: (value) => (!value ? 'Description is required' : null),
+        quantity: (value) => (value < 1 ? 'Quantity must be at least 1' : null),
+        current_location: (value) => (!value ? 'Current location is required' : null),
+        permanent_location: (value) => (!value ? 'Permanent location is required' : null),
+        categories: (value) => (!value || value.length === 0 ? 'Must list at least one category' : null),
+        sub_categories: (value) => (!value || value.length === 0 ? 'Must list at least one sub-category' : null),
+      },
+    });
 
   const { data: sub_categories } = client.useQuery(
     "post",
@@ -436,46 +437,39 @@ export function AddUpdateItem({
               (perm_locations?.locations ?? []).find(
                 (loc) => loc.id.toString() === val,
               ) ?? null;
-            form.setFieldValue("permanent_location", selected);
-          }}
-          searchable
-          clearable
-        />
-        <AddNewLocation></AddNewLocation>
+              form.setFieldValue('permanent_location', selected);
+            }}
+            searchable
+            clearable
+            error={typeof form.errors.permanent_location === 'string' ? form.errors.permanent_location : null}
+          />
+          <AddNewLocation></AddNewLocation>
 
-        <MultiSelectWithObjects<CategoryDumpSchema>
-          data={categories?.categories ?? []}
-          getItemLabel={(cat) => cat.name}
-          value={form.values.categories}
-          onChange={(selected) => form.setFieldValue("categories", selected)}
-          onFocus={() =>
-            form.setTouched({ ...form.isTouched, categories: true })
-          }
-          onBlur={() =>
-            form.setTouched({ ...form.isTouched, categories: true })
-          }
-          label="Categories"
-          placeholder="Select categories"
-        />
-        <AddNewCategory type="primary"></AddNewCategory>
+          <MultiSelectWithObjects<CategoryDumpSchema>
+            data={categories?.categories ?? []}
+            getItemLabel={(cat) => cat.name}
+            value={form.values.categories}
+            onChange={(selected) => form.setFieldValue('categories', selected)}
+            onFocus={() => {}}
+            onBlur={() => {}}
+            label="Categories"
+            placeholder="Select categories"
+            error={typeof form.errors.categories === 'string' ? form.errors.categories : null}
+          />
+          <AddNewCategory type='primary'></AddNewCategory>
 
-        <MultiSelectWithObjects<CategoryDumpSchema>
-          data={sub_categories?.categories ?? []}
-          getItemLabel={(cat) => cat.name}
-          value={form.values.sub_categories}
-          onChange={(selected) =>
-            form.setFieldValue("sub_categories", selected)
-          }
-          onFocus={() =>
-            form.setTouched({ ...form.isTouched, sub_categories: true })
-          }
-          onBlur={() =>
-            form.setTouched({ ...form.isTouched, sub_categories: true })
-          }
-          label="Sub Categories"
-          placeholder="Select sub-categories"
-        />
-        <AddNewCategory type="secondary"></AddNewCategory>
+          <MultiSelectWithObjects<CategoryDumpSchema>
+            data={sub_categories?.categories ?? []}
+            getItemLabel={(cat) => cat.name}
+            value={form.values.sub_categories}
+            onChange={(selected) => form.setFieldValue('sub_categories', selected)}
+            onFocus={() => {}}
+            onBlur={() => {}}
+            label="Sub Categories"
+            placeholder="Select sub-categories"
+            error={typeof form.errors.sub_categories === 'string' ? form.errors.sub_categories : null}
+          />
+          <AddNewCategory type='secondary'></AddNewCategory>
 
         <Textarea
           mt="sm"

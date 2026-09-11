@@ -4,7 +4,7 @@ import type { paths } from "./schema"; // Your generated types
 
 // 1. Create the underlying openapi-fetch client
 export const fetchClient = createFetchClient<paths>({
-  baseUrl: "http://localhost:8000",
+  baseUrl: window.location.origin,
   credentials: "include",
 });
 
