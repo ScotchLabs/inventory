@@ -23,7 +23,7 @@ services:
     ports:
       - "8001:8001"
     volumes:
-      - ./localdevuploads:/root/localdevfiles/
+      - ./localdevuploads:/root/localdevuploads/
     networks:
       - app-network
     entrypoint: python3 -m http.server 8001 -d /root/localdevuploads/

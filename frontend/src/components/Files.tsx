@@ -7,9 +7,9 @@ import {
   Text,
 } from "@mantine/core";
 import { IconUpload, IconX, IconPhoto } from "@tabler/icons-react";
-import "../App.css";
 import { Dropzone, IMAGE_MIME_TYPE, type FileWithPath } from "@mantine/dropzone";
 import type { components } from "../api/schema";
+import { API_URL} from '../environment'
 
 
 type FileDumpSchema = components['schemas']['FileDumpSchema']
@@ -40,8 +40,10 @@ async function satisUploadFiles({ files }: { files: FileWithPath[] }) {
     formData.append("files", file);
   }
   const response = await axios.post(
-    "http://localhost:8000/files/upload",
-    formData,
+    `${API_URL}/files/upload`,
+    formData, {
+        withCredentials: true
+    }
   );
 
   return response.data;

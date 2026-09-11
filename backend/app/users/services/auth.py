@@ -10,7 +10,7 @@ from sqlalchemy.dialects.postgresql import insert
 from app.db import db
 from app.users.models.token import Token
 from app.users.models.user import ADMIN_EMAILS, User
-from app.users.services.user import get_or_create_user_for_email
+from app.users.services.user import get_or_create_user_for_email, get_user_by_id
 from app.utils.current_request import get_current_request
 from app.utils.environment import SNSDeploymentType, sns_environment
 

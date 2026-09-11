@@ -2,7 +2,7 @@ dc-up:
 	docker compose up -d
 
 dc-down:
-	docker compose down --volumes -d
+	docker compose down --volumes
 
 db-migrate:
 	alembic revision --autogenerate
