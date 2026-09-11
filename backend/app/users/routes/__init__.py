@@ -2,9 +2,10 @@ from fastapi import APIRouter
 
 from app.users.routes.auth import router as auth_router
 from app.users.routes.user import router as user_router
+from app.utils.api_route import SatisAPIRouter
 
 
-router = APIRouter(
+router = SatisAPIRouter(
     prefix="/users",
     responses={404: {"description": "Not found"}},
 )

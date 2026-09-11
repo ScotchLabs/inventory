@@ -5,8 +5,8 @@ dist/
 .venv
 
 # for localdev
-/localdata/*
-!localdata/
+/localdevuploads/*
+!localdevuploads/
 
 .vscode/
 *.swp

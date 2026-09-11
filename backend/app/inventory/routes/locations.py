@@ -8,9 +8,10 @@ from app.inventory.schemas.location import (
     LocationDumpSchema,
     LocationListResponseSchema,
 )
+from app.utils.api_route import SatisAPIRouter, public_route
 
 
-router = APIRouter(
+router = SatisAPIRouter(
     prefix="/locations",
     responses={404: {"description": "Not found"}},
 )
@@ -40,6 +41,7 @@ async def create_location(body: LocationCreateSchema) -> LocationDumpSchema:
 
 
 @router.post("/list")
+@public_route
 def list_locations() -> LocationListResponseSchema[LocationDumpSchema]:
     query = select(Location)
 

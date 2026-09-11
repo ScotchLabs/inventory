@@ -1,14 +1,19 @@
 dc-up:
 	docker compose up -d
 
+dc-down:
+	docker compose down --volumes -d
+
 db-migrate:
 	alembic revision --autogenerate
 
 db-upgrade:
 	alembic upgrade head
 
+
+
 start:
-	uv run uvicorn main:app --reload
+	uv run uvicorn app.app:app --reload
 
 spec:
 	mkdir -p dist/

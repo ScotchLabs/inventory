@@ -221,27 +221,6 @@ export function Inventory(admin: boolean) {
         <Table.Td>{asset.last_updated_by_email}</Table.Td>
         <Table.Td>{asset.notes}</Table.Td>
       </Table.Tr>
-<<<<<<< HEAD
-    ) : (
-      <Table.Tr key={asset.id}>
-        <Table.Td>{asset.name}</Table.Td>
-        <Table.Td>{asset.name_verbose}</Table.Td>
-        <Table.Td>{asset.quantity}</Table.Td>
-        <Table.Td>
-          {asset.categories?.map((category) => category.name)?.join(", ")}
-        </Table.Td>
-        <Table.Td>
-          {asset.sub_categories?.map((category) => category.name).join(", ")}
-        </Table.Td>
-        <Table.Td>{asset.current_location}</Table.Td>
-        <Table.Td>{asset.permanent_location?.id}</Table.Td>
-        <Table.Td>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
-        <Table.Td>{asset.last_updated_by_email}</Table.Td>
-        <Table.Td>{asset.notes}</Table.Td>
-      </Table.Tr>
-    ),
-  );
-=======
     )
     :
     (
@@ -258,7 +237,6 @@ export function Inventory(admin: boolean) {
       <Table.Td>{asset.notes}</Table.Td>
     </Table.Tr>
   ));
->>>>>>> upstream/main
 
   const headers = admin ? (
     <Table.Tr>
@@ -290,21 +268,6 @@ export function Inventory(admin: boolean) {
   );
 
   return (
-<<<<<<< HEAD
-    <div style={{ display: "inline-block", maxWidth: "100%" }}>
-      <TextInput
-        placeholder="Search by any field"
-        mb="md"
-        leftSection={<IconSearch size={16} stroke={1.5} />}
-        onChange={(event) => setSearch(event.currentTarget.value)}
-      />
-      <Table.ScrollContainer minWidth={500} maxHeight={300}>
-        <Table withTableBorder highlightOnHover stickyHeader>
-          <Table.Thead>{headers}</Table.Thead>
-          <Table.Tbody style={{ fontSize: "13px" }}>{rows}</Table.Tbody>
-        </Table>
-      </Table.ScrollContainer>
-=======
     <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
       <div style={{ width: "90%", marginLeft: "5%", marginRight: "5%" }}>
         <TextInput
@@ -326,7 +289,6 @@ export function Inventory(admin: boolean) {
           </Table>
         </Table.ScrollContainer>
       </div>
->>>>>>> upstream/main
     </div>
   );
 }
@@ -383,7 +345,7 @@ export function FooterSimple() {
 
 function Admin() {
   const handleGoogleLogin = () => {
-    window.location.href = `${window.location.origin}/users/auth/google/login`;
+    window.location.href = `http://localhost:8000/users/auth/google/login`;
   };
 
   return (

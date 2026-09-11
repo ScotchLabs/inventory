@@ -3,9 +3,10 @@ from fastapi import APIRouter
 from app.inventory.routes.asset import router as assets_router
 from app.inventory.routes.locations import router as locations_router
 from app.inventory.routes.category import router as categories_router
+from app.utils.api_route import SatisAPIRouter
 
 
-router = APIRouter(
+router = SatisAPIRouter(
     prefix="/inventory",
     responses={404: {"description": "Not found"}},
 )

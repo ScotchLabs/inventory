@@ -10,9 +10,6 @@ import {
   Loader,
   Modal,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useEffect, Suspense, useMemo } from "react";
-import { Skeleton, TextInput, NumberInput, MultiSelect, Select, Textarea, Button, Group, Loader, Modal, Notification } from "@mantine/core";
 import { useForm, } from "@mantine/form";
 import { useEffect, Suspense, useMemo, useState } from "react";
 import { useNavigate, Outlet } from "react-router";
@@ -321,39 +318,6 @@ export function AddUpdateItem({
   initialValues: AddUpdateItemFormValues;
   id: number | null;
 }) {
-  const { data: assets } = client.useQuery("post", "/inventory/asset/list", {
-    body: { search: null },
-  });
-  const form = useForm<AddUpdateItemFormValues>({
-    mode: "uncontrolled",
-    initialValues: initialValues,
-    validate: {
-      name: (value) =>
-        !value
-          ? "Name is required"
-          : value.length > 15
-            ? "Length of name must be less than 15 characters"
-            : (assets?.elements ?? []).some(
-                  (asset) =>
-                    asset.name.toLowerCase().trim() ===
-                      value.toLowerCase().trim() &&
-                    (id === null || asset.id !== id),
-                )
-              ? "Item name already exists"
-              : null,
-      name_verbose: (value) => (!value ? "Description is required" : null),
-      quantity: (value) => (value < 1 ? "Quantity must be at least 1" : null),
-      current_location: (value) =>
-        !value ? "Current location is required" : null,
-      categories: (value) =>
-        !value || value.length === 0 ? "Must list at least one category" : null,
-      sub_categories: (value) =>
-        !value || value.length === 0
-          ? "Must list at least one sub-category"
-          : null,
-    },
-  });
-
   const { data: perm_locations } = client.useQuery(
     "post",
     "/inventory/locations/list",

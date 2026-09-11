@@ -6,10 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.db.base import Base
 
 
-if TYPE_CHECKING:
-    pass
-
-
 class Category(Base):
     __tablename__ = "categories"
 

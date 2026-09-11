@@ -19,18 +19,17 @@ services:
     networks:
       - app-network
   cdn:
-    image: nginx:alpine
+    image: python:3.11-slim
     ports:
-      - "8000:8000"
+      - "8001:8001"
     volumes:
-      - ./localdata:/root/localdata/
+      - ./localdevuploads:/root/localdevfiles/
     networks:
       - app-network
-    entrypoint: python3 -m http.server 5100 -d /root/localdata/
+    entrypoint: python3 -m http.server 8001 -d /root/localdevuploads/
 
 volumes:
   db-data:
-  localdata:
 
 networks:
   app-network:

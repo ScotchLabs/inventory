@@ -13,4 +13,5 @@ class File(Base):
     url: Mapped[str] = mapped_column(Text)
 
     filename: Mapped[str] = mapped_column(Text)
+    system_filename: Mapped[str] = mapped_column(Text)
     content_type: Mapped[str] = mapped_column(Text)
