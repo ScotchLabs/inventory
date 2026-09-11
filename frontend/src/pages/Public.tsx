@@ -298,7 +298,7 @@ export const variantColorResolver = (input: any) => {
 };
 
 const links = [
-  { link: "mailto:snstheatre.tc@gmail.com?subject=SNS%20Inventory%Item%Request", label: "Request Item" },
+  { link: "mailto:snstheatre.tc@gmail.com?subject=SNS%20Inventory%20Item%20Request", label: "Request Item" },
   { link: "https://www.snstheatre.org/", label: "Scotch'n'Soda Home" },
 ];
 

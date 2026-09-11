@@ -27,7 +27,7 @@ def category_to_dump_schema(category: Category) -> CategoryDumpSchema:
 @router.post("/create")
 async def create_location(body: CategoryCreateSchema) -> CategoryDumpSchema:
     existing = db.execute(
-        select(Category).where(Category.name.ilike(body.name))
+        select(Category).where(Category.name.ilike(body.name.strip()))
     ).scalar_one_or_none()
 
     if existing:
@@ -37,7 +37,7 @@ async def create_location(body: CategoryCreateSchema) -> CategoryDumpSchema:
 
     category = db.execute(
         insert(Category)
-        .values(name=body.name, classification=body.classification)
+        .values(name=body.name.strip(), classification=body.classification)
         .returning(Category)
     ).scalar_one()
     db.commit()

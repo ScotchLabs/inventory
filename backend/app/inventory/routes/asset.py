@@ -55,7 +55,7 @@ def asset_to_dump_schema(asset: Asset) -> AssetDumpSchema:
         user = db.execute(
             select(User.email).where(User.id == asset.last_updated_by)
         ).scalar_one_or_none()
-        user_email = user[:-15] if user else None
+        user_email = user[:user.find("@")] if user else None
 
     permanent = db.execute(
         select(Location).where(Location.id == asset.permanent_location_id)
@@ -128,7 +128,7 @@ def list_assets(body: AssetSearchParems) -> ListResponseSchema[AssetDumpSchema]:
 def create_asset(body: AssetCreateSchema) -> AssetDumpSchema:
 
     existing = db.execute(
-        select(Asset).where(Asset.name.ilike(body.name))
+        select(Asset).where(Asset.name.strip().ilike(body.name))
     ).scalar_one_or_none()
 
     if existing:
@@ -138,10 +138,10 @@ def create_asset(body: AssetCreateSchema) -> AssetDumpSchema:
 
     asset = Asset(
         file_id=body.file_id,
-        name=body.name,
+        name=body.name.strip(),
         name_verbose=body.name_verbose,
         quantity=body.quantity,
-        current_location=body.current_location,
+        current_location=body.current_location.strip(),
         permanent_location_id=body.permanent_location_id,
         last_updated=body.last_updated,
         last_updated_by=body.last_updated_by,
@@ -193,10 +193,10 @@ def edit_asset(body: AssetUpdateSchema) -> SuccessResponse:
         .where(Asset.id == body.id)
         .values(
             file_id=body.file_id,
-            name=body.name,
+            name=body.name.strip(),
             name_verbose=body.name_verbose,
             quantity=body.quantity,
-            current_location=body.current_location,
+            current_location=body.current_location.strip(),
             permanent_location_id=body.permanent_location_id,
             last_updated=body.last_updated,
             last_updated_by=body.last_updated_by,
