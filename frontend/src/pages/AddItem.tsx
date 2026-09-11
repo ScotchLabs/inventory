@@ -1,4 +1,4 @@
-import { Skeleton, TextInput, NumberInput, MultiSelect, Select, Textarea, Button, Group, Loader, Modal, Notification } from "@mantine/core";
+import { Skeleton, TextInput, NumberInput, MultiSelect, Select, Textarea, Button, Group, Loader, Modal, Notification, Stack } from "@mantine/core";
 import { useForm, } from "@mantine/form";
 import { useEffect, Suspense, useMemo, useState } from "react";
 import { useNavigate, Outlet } from "react-router";
@@ -425,20 +425,22 @@ export function AddUpdateItem({ onSubmit, initialValues, id
             rows={4}
             {...form.getInputProps('notes')}
           />
-          <SatisDropzone
-          />
+          <Stack> 
+            <SatisDropzone
+            />
 
-          <Group justify="flex-end">
-            <Button
-              type="submit"
-              variant="light"
-              color="rgba(28, 61, 145, 1)"
-              disabled={form.submitting}
-              rightSection={form.submitting? <Loader size={16} /> : null}
-            >
-              {form.submitting? 'Updating...' : 'Submit'}
-            </Button>
-          </Group>
+            <Group justify="flex-end">
+                <Button
+                type="submit"
+                variant="light"
+                color="rgba(28, 61, 145, 1)"
+                disabled={form.submitting}
+                rightSection={form.submitting? <Loader size={16} /> : null}
+                >
+                {form.submitting? 'Updating...' : 'Submit'}
+                </Button>
+            </Group>
+          </Stack>
       </form>
     </div>
     );
