@@ -1,9 +1,9 @@
 import { Fragment, useState } from "react";
 import { client } from "../api/client";
-import { format } from "date-fns";
-import { useDisclosure } from "@mantine/hooks";
+import { format } from 'date-fns';
+import { useDisclosure } from '@mantine/hooks';
 import "@mantine/core/styles.css";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Table,
   Stack,
@@ -17,38 +17,38 @@ import {
   parseThemeColor,
   rgba,
   darken,
-  Modal,
+  Modal
 } from "@mantine/core";
 import { IconSearch, IconEdit, IconTrash } from "@tabler/icons-react";
 import classes from "./FooterSimple.module.css";
 import "./Public.css";
 import sns_logo from "../assets/sns_logo.png";
 import { useDebouncedValue } from "@mantine/hooks";
-import { AddUpdateItem, type AddUpdateItemFormValues } from "./AddItem";
+import { AddUpdateItem, type AddUpdateItemFormValues } from "./AddItem"
 
-export function Inventory(admin: boolean) {
+export function Inventory(admin:boolean) {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 300)[0];
   const { data: assets } = client.useQuery("post", "/inventory/asset/list", {
-    body: { search: debouncedSearch },
+    body: { search: debouncedSearch }
   });
 
   function DeleteItem({ id }: { id: number }) {
     const [opened, { open, close }] = useDisclosure(false);
     const queryClient = useQueryClient();
 
-    const { mutateAsync: handleDelete } = client.useMutation(
-      "delete",
-      "/inventory/asset/delete/{id}",
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({
-            queryKey: ["post", "/inventory/asset/list"],
-            exact: false,
-          });
-          close();
-        },
-      },
+    const { mutateAsync: handleDelete} = client.useMutation(
+        'delete',
+        '/inventory/asset/delete/{id}',
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: ["post", "/inventory/asset/list"],
+              exact: false
+            });
+            close()
+          }
+        }
     );
 
     return (
@@ -60,83 +60,78 @@ export function Inventory(admin: boolean) {
           onClose={close}
           withCloseButton={false}
           radius={0}
-          transitionProps={{ transition: "fade", duration: 200 }}
+          transitionProps={{ transition: 'fade', duration: 200 }}
         >
           <Stack>
-            <Button
-              color="rgba(245, 39, 39, 1)"
-              onClick={async () => {
-                try {
-                  await handleDelete({ params: { path: { id } } });
-                } catch (error) {
-                  console.error("Failed to delete item:", error);
-                }
-              }}
-            >
-              Delete Item?
-            </Button>
+            <Button color="rgba(245, 39, 39, 1)"
+                  onClick={async () => {
+                    try {
+                      await handleDelete({ params: { path: { id } } });
+                    } catch (error) {
+                      console.error('Failed to delete item:', error);
+                    }
+                  }}>Delete Item?</Button>
             <p style={{ fontSize: "12px" }}>This cannot be undone!</p>
           </Stack>
         </Modal>
 
-        <Button
-          variant="default"
-          radius="lg"
-          color="rgba(0, 0, 0, 1)"
-          size="compact-xs"
-          p={3}
-          leftSection={<IconTrash size={16} />}
-          styles={{ section: { marginRight: "3px" } }}
-          onClick={open}
-        >
+        <Button variant="default"
+                radius="lg"
+                color="rgba(0, 0, 0, 1)"
+                size="compact-xs"
+                p={3}
+                leftSection={<IconTrash size={16}/>}
+                styles={{section:{ marginRight: '3px' }}} onClick={open}>
           Delete
         </Button>
       </>
     );
   }
 
-  function UpdateItem({ id }: { id: number }) {
-    const asset = client.useSuspenseQuery("get", "/inventory/asset/get/{id}", {
-      params: {
-        path: { id: id },
-      },
-    }).data;
+  function UpdateItem({id}: {id: number}) {
+    const asset = client.useSuspenseQuery(
+          'get',
+          '/inventory/asset/get/{id}', {
+          params: {
+            path: { id: id },
+          },
+        }).data;
 
     const initialValues: AddUpdateItemFormValues = {
-      name: asset.name,
-      name_verbose: asset.name_verbose,
-      quantity: asset.quantity,
-      current_location: asset.current_location,
-      permanent_location: asset.permanent_location ?? null,
-      categories: asset.categories ?? [],
-      sub_categories: asset.sub_categories ?? [],
-      notes: asset.notes,
-      file_id: asset.file_id ?? null,
-    };
+            name: asset.name,
+            name_verbose: asset.name_verbose,
+            quantity: asset.quantity,
+            current_location: asset.current_location,
+            permanent_location: asset.permanent_location ?? null,
+            categories: asset.categories ?? [],
+            sub_categories: asset.sub_categories ?? [],
+            notes: asset.notes,
+            file_id: asset.file_id ?? null,
+          }
 
     const [opened, { open, close }] = useDisclosure(false);
     const queryClient = useQueryClient();
 
     const { mutateAsync: handleUpdate } = client.useMutation(
-      "post",
-      "/inventory/asset/edit",
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({
-            queryKey: ["post", "/inventory/asset/list"],
-            exact: false,
-          });
-          close();
-        },
-      },
+        'post',
+        '/inventory/asset/edit',
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: ["post", "/inventory/asset/list"],
+              exact: false
+            });
+            close()
+          }
+        }
     );
 
-    const { data: session } = client.useSuspenseQuery(
-      "get",
-      "/users/users/current-session",
-    );
+  const { data: session } = client.useSuspenseQuery(
+          "get",
+          "/users/users/current-session",
+        );
 
-    return (
+  return (
       <>
         <Modal
           centered={true}
@@ -145,10 +140,9 @@ export function Inventory(admin: boolean) {
           onClose={close}
           withCloseButton={false}
           radius={0}
-          transitionProps={{ transition: "fade", duration: 200 }}
+          transitionProps={{ transition: 'fade', duration: 200 }}
         >
-          <AddUpdateItem
-            onSubmit={async (values) => {
+          <AddUpdateItem onSubmit={async (values) => {
               try {
                 await handleUpdate({
                   body: {
@@ -157,48 +151,42 @@ export function Inventory(admin: boolean) {
                     name_verbose: values.name_verbose,
                     quantity: values.quantity,
                     current_location: values.current_location,
-                    categories: values.categories
-                      .filter((cat) => cat !== null)
-                      .map((category) => category.id),
-                    sub_categories: values.sub_categories
-                      .filter((cat) => cat !== null)
-                      .map((category) => category.id),
+                    categories: values.categories.filter((cat) => cat !== null).map((category) => category.id),
+                    sub_categories: values.sub_categories.filter((cat) => cat !== null).map((category) => category.id),
                     notes: values.notes,
                     file_id: values.file_id,
-                    permanent_location_id:
-                      values.permanent_location?.id ?? null,
+                    permanent_location_id: values.permanent_location?.id ?? null,
                     last_updated: new Date().toISOString(),
                     last_updated_by: session.user?.id,
-                  },
-                });
+                  }
+                })
               } catch (error) {
-                console.error("Failed to update item:", error);
+                console.error('Failed to update item:', error);
                 throw error;
               }
-            }}
-            initialValues={initialValues}
-            id={id}
-          />
+          }} 
+          initialValues={initialValues}
+          id={id}/>
         </Modal>
 
-        <Button
-          variant="default"
-          radius="lg"
-          color="rgba(0, 0, 0, 1)"
-          size="compact-xs"
-          p={3}
-          leftSection={<IconEdit size={16} />}
-          styles={{ section: { marginRight: "3px" } }}
-          onClick={open}
-        >
-          Edit
-        </Button>
+        <Button variant="default"
+                radius="lg"
+                color="rgba(0, 0, 0, 1)"
+                size="compact-xs"
+                p={3}
+                leftSection={<IconEdit size={16}/>}
+                styles={{section:{ marginRight: '3px' }}}
+                onClick={open}>
+          Edit</Button>
       </>
     );
+
+
   }
 
   const rows = (assets?.elements ?? []).map((asset) =>
-    admin ? (
+    admin?
+    (
       <Table.Tr key={asset.id}>
         <Table.Td>
           <Stack gap="2px">
@@ -209,12 +197,8 @@ export function Inventory(admin: boolean) {
         <Table.Td>{asset.name}</Table.Td>
         <Table.Td>{asset.name_verbose}</Table.Td>
         <Table.Td>{asset.quantity}</Table.Td>
-        <Table.Td>
-          {asset.categories?.map((category) => category.name)?.join(", ")}
-        </Table.Td>
-        <Table.Td>
-          {asset.sub_categories?.map((category) => category.name).join(", ")}
-        </Table.Td>
+        <Table.Td>{asset.categories?.map((category) => category.name)?.join(", ")}</Table.Td>
+        <Table.Td>{asset.sub_categories?.map((category) => category.name).join(", ")}</Table.Td>
         <Table.Td>{asset.current_location}</Table.Td>
         <Table.Td>{asset.permanent_location?.name}</Table.Td>
         <Table.Td>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
@@ -238,7 +222,8 @@ export function Inventory(admin: boolean) {
     </Table.Tr>
   ));
 
-  const headers = admin ? (
+  const headers =
+    admin?
     <Table.Tr>
       <Table.Th>Interact</Table.Th>
       <Table.Th>Item</Table.Th>
@@ -252,7 +237,7 @@ export function Inventory(admin: boolean) {
       <Table.Th>Last Updated By</Table.Th>
       <Table.Th>Notes</Table.Th>
     </Table.Tr>
-  ) : (
+    :
     <Table.Tr>
       <Table.Th>Item</Table.Th>
       <Table.Th>Description</Table.Th>
@@ -265,7 +250,6 @@ export function Inventory(admin: boolean) {
       <Table.Th>Last Updated By</Table.Th>
       <Table.Th>Notes</Table.Th>
     </Table.Tr>
-  );
 
   return (
     <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
@@ -301,7 +285,7 @@ export const variantColorResolver = (input: any) => {
   });
 
   // Completely override variant
-  if (input.variant === "light") {
+  if (input.variant === 'light') {
     return {
       background: rgba(parsedColor.value, 0.1),
       hover: rgba(parsedColor.value, 0.15),
@@ -345,22 +329,14 @@ export function FooterSimple() {
 
 function Admin() {
   const handleGoogleLogin = () => {
-    window.location.href = `http://localhost:8000/users/auth/google/login`;
+    window.location.href = `${window.location.origin}/users/auth/google/login`;
   };
 
-  return (
-    <Button
-      variant="default"
-      color="rgba(0, 0, 0, 1)"
-      onClick={handleGoogleLogin}
-    >
-      Sign in with Google
-    </Button>
-  );
+  return <Button variant="default" color = "rgba(0, 0, 0, 1)" onClick={handleGoogleLogin}>Sign in with Google</Button>;
 }
 
 export default function Public() {
-  const Table = Inventory(false);
+  const Table = Inventory(false)
 
   return (
     <MantineProvider theme={{ variantColorResolver }}>
@@ -412,7 +388,7 @@ export default function Public() {
               gap: "30px",
             }}
           >
-            {Table}
+          {Table}
           </div>
         </Stack>
         <FooterSimple></FooterSimple>

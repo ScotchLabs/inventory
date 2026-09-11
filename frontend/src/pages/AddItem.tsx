@@ -1,15 +1,4 @@
-import {
-  Skeleton,
-  TextInput,
-  NumberInput,
-  MultiSelect,
-  Select,
-  Textarea,
-  Button,
-  Group,
-  Loader,
-  Modal,
-} from "@mantine/core";
+import { Skeleton, TextInput, NumberInput, MultiSelect, Select, Textarea, Button, Group, Loader, Modal, Notification } from "@mantine/core";
 import { useForm, } from "@mantine/form";
 import { useEffect, Suspense, useMemo, useState } from "react";
 import { useNavigate, Outlet } from "react-router";
@@ -41,20 +30,20 @@ export function AdminProvider() {
   );
 }
 
-type CategoryDumpSchema = components["schemas"]["CategoryDumpSchema"];
-type LocationDumpSchema = components["schemas"]["LocationDumpSchema"];
+type CategoryDumpSchema = components['schemas']['CategoryDumpSchema']
+type LocationDumpSchema = components['schemas']['LocationDumpSchema']
 
 export type AddUpdateItemFormValues = {
-  name: string;
-  name_verbose: string;
-  quantity: number;
-  current_location: string;
-  permanent_location: LocationDumpSchema | null;
-  categories: CategoryDumpSchema[];
-  sub_categories: CategoryDumpSchema[];
-  notes: string;
-  file_id: number | null;
-};
+    name: string,
+    name_verbose: string,
+    quantity: number,
+    current_location: string,
+    permanent_location: LocationDumpSchema | null,
+    categories: CategoryDumpSchema[],
+    sub_categories: CategoryDumpSchema[],
+    notes: string,
+    file_id: number | null,
+}
 
 function MultiSelectWithObjects<T extends { id: number }>({
   data,
@@ -79,10 +68,10 @@ function MultiSelectWithObjects<T extends { id: number }>({
 }) {
   const mappedData = useMemo(
     () => new Map(data.map((item) => [item.id.toString(), item])),
-    [data],
-  );
+    [data]
+  )
 
-  const stringValue = value.map((item) => item.id.toString());
+  const stringValue = value.map((item) => item.id.toString())
 
   return (
     <MultiSelect
@@ -97,15 +86,15 @@ function MultiSelectWithObjects<T extends { id: number }>({
       onChange={(selectedIds) => {
         const selectedObjects = selectedIds
           .map((id) => mappedData.get(id))
-          .filter((item) => item !== undefined) as T[];
-        onChange(selectedObjects);
+          .filter((item) => item !== undefined) as T[]
+        onChange(selectedObjects)
       }}
       onFocus={onFocus}
       onBlur={onBlur}
       searchable
       error={error}
     />
-  );
+  )
 }
 
 export function AddNewCategory({type} : {type : string}) {
@@ -211,6 +200,7 @@ export function AddNewCategory({type} : {type : string}) {
     )
 }
 
+
 export function AddNewLocation() {
     const { data: locations } = client.useQuery("post", "/inventory/locations/list");
     const form_inner = useForm ({
@@ -309,19 +299,9 @@ export function AddNewLocation() {
     )
 }
 
-export function AddUpdateItem({
-  onSubmit,
-  initialValues,
-  id,
-}: {
-  onSubmit: (_: AddUpdateItemFormValues) => Promise<void>;
-  initialValues: AddUpdateItemFormValues;
-  id: number | null;
-}) {
-  const { data: perm_locations } = client.useQuery(
-    "post",
-    "/inventory/locations/list",
-  );
+
+export function AddUpdateItem({ onSubmit, initialValues, id
+ }: { onSubmit: (_:AddUpdateItemFormValues) => Promise<void>, initialValues : AddUpdateItemFormValues, id: number | null }) {
 
   const { data: assets } = client.useQuery("post", "/inventory/asset/list", {body: { search: null }});
   const form = useForm <AddUpdateItemFormValues> ({
@@ -343,63 +323,65 @@ export function AddUpdateItem({
       },
     });
 
-  const { data: sub_categories } = client.useQuery(
-    "post",
-    "/inventory/categories/list_secondary",
-  );
+    const { data: perm_locations } = client.useQuery("post", "/inventory/locations/list");
 
-  const handleSubmit = form.onSubmit(async (values) => {
-    try {
-      await onSubmit(values);
-    } catch (error) {
-      console.error("Form submission error:", error);
-      throw error;
-    }
-  });
-  return (
+    const { data: categories } = client.useQuery("post", "/inventory/categories/list_primary");
+
+    const { data: sub_categories } = client.useQuery("post", "/inventory/categories/list_secondary");
+
+    const handleSubmit = form.onSubmit(async (values) => {
+      try {
+        await onSubmit(values);
+      } catch (error) {
+        console.error('Form submission error:', error);
+        throw error;
+      }
+    });
+    return (
     <div onClick={(e) => e.stopPropagation()}>
       <form onSubmit={handleSubmit} style={{ maxWidth: 500 }}>
-        <TextInput
-          label="Item Name"
-          placeholder="e.g. fake ivy"
-          {...form.getInputProps("name")}
-        />
 
-        <TextInput
-          mt="sm"
-          label="Description"
-          placeholder="e.g. 12 foot vine of green ivy"
-          {...form.getInputProps("name_verbose")}
-        />
+          <TextInput
+            label="Item Name"
+            placeholder="e.g. fake ivy"
+            {...form.getInputProps('name')}
+          />
 
-        <NumberInput
-          mt="sm"
-          label="Quantity"
-          placeholder="Enter quantity"
-          min={1}
-          {...form.getInputProps("quantity")}
-        />
+          <TextInput
+            mt="sm"
+            label="Description"
+            placeholder="e.g. 12 foot vine of green ivy"
+            {...form.getInputProps('name_verbose')}
+          />
 
-        <TextInput
-          mt="sm"
-          label="Current Location"
-          placeholder="Type where this item currently is"
-          {...form.getInputProps("current_location")}
-        />
+          <NumberInput
+            mt="sm"
+            label="Quantity"
+            placeholder="Enter quantity"
+            min={1}
+            {...form.getInputProps('quantity')}
+          />
 
-        <Select
-          mt="sm"
-          label="Permanent Home"
-          placeholder="Select permanent location"
-          data={(perm_locations?.locations ?? []).map((loc) => ({
-            value: loc.id.toString(),
-            label: loc.name,
-          }))}
-          value={form.values.permanent_location?.id?.toString() ?? null}
-          onChange={(val) => {
-            const selected =
-              (perm_locations?.locations ?? []).find(
-                (loc) => loc.id.toString() === val,
+          <TextInput
+            mt="sm"
+            label="Current Location"
+            placeholder="Type where this item currently is"
+            {...form.getInputProps('current_location')}
+          />
+
+
+          <Select
+            mt="sm"
+            label="Permanent Home"
+            placeholder="Select permanent location"
+            data={(perm_locations?.locations ?? []).map((loc) => ({
+              value: loc.id.toString(),
+              label: loc.name,
+            }))}
+            value={form.values.permanent_location?.id?.toString() ?? null}
+            onChange={(val) => {
+              const selected = (perm_locations?.locations ?? []).find(
+                (loc) => loc.id.toString() === val
               ) ?? null;
               form.setFieldValue('permanent_location', selected);
             }}
@@ -435,26 +417,26 @@ export function AddUpdateItem({
           />
           <AddNewCategory type='secondary'></AddNewCategory>
 
-        <Textarea
-          mt="sm"
-          label="Notes"
-          placeholder="Add any additional notes"
-          rows={4}
-          {...form.getInputProps("notes")}
-        />
+          <Textarea
+            mt="sm"
+            label="Notes"
+            placeholder="Add any additional notes"
+            rows={4}
+            {...form.getInputProps('notes')}
+          />
 
-        <Group justify="flex-end">
-          <Button
-            type="submit"
-            variant="light"
-            color="rgba(28, 61, 145, 1)"
-            disabled={form.submitting}
-            rightSection={form.submitting ? <Loader size={16} /> : null}
-          >
-            {form.submitting ? "Updating..." : "Submit"}
-          </Button>
-        </Group>
+          <Group justify="flex-end">
+            <Button
+              type="submit"
+              variant="light"
+              color="rgba(28, 61, 145, 1)"
+              disabled={form.submitting}
+              rightSection={form.submitting? <Loader size={16} /> : null}
+            >
+              {form.submitting? 'Updating...' : 'Submit'}
+            </Button>
+          </Group>
       </form>
     </div>
-  );
-}
+    );
+  }
