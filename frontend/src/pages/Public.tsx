@@ -215,7 +215,7 @@ export function Inventory(admin:boolean) {
       <Table.Td>{asset.categories?.map((category) => category.name)?.join(", ")}</Table.Td>
       <Table.Td>{asset.sub_categories?.map((category) => category.name).join(", ")}</Table.Td>
       <Table.Td>{asset.current_location}</Table.Td>
-      <Table.Td>{asset.permanent_location?.id}</Table.Td>
+      <Table.Td>{asset.permanent_location?.name}</Table.Td>
       <Table.Td>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
       <Table.Td>{asset.last_updated_by_email}</Table.Td>
       <Table.Td>{asset.notes}</Table.Td>
