@@ -4,7 +4,7 @@ from typing import assert_never
 from sqlalchemy import insert, select
 
 from app.files.models import File
-from app.files.schemas import FileSearchParams
+from app.files.schemas import FileSearchParams, FileDumpSchema
 from app.utils.db_helpers import exec_scalar
 from app.utils.environment import sns_environment, SNSDeploymentType
 from app.utils.strings import make_slug
@@ -98,3 +98,11 @@ def handle_file_upload(
     )
 
     return file
+
+def file_to_dump_schema(file: File) -> FileDumpSchema:
+    return FileDumpSchema(
+                id=file.id,
+                url=file.url,
+                filename=file.filename,
+            )
+

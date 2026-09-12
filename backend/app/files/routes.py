@@ -4,7 +4,11 @@ from fastapi import File as FastAPIFile, Query, UploadFile
 
 from app.db import db
 from app.files.schemas import FileDumpSchema, FileSearchParams
-from app.files.services import file_search_query, handle_file_upload
+from app.files.services import (
+    file_search_query,
+    handle_file_upload,
+    file_to_dump_schema,
+)
 from app.inventory.schemas.asset import ListResponseSchema
 from app.utils.api_route import SatisAPIRouter, public_route
 from app.utils.db_helpers import exec_scalars
@@ -22,16 +26,7 @@ async def files_list(
     params: Annotated[FileSearchParams, Query()],
 ) -> ListResponseSchema[FileDumpSchema]:
     files = exec_scalars(file_search_query(params))
-    return ListResponseSchema(
-        elements=[
-            FileDumpSchema(
-                id=satis_file.id,
-                url=satis_file.url,
-                filename=satis_file.filename,
-            )
-            for satis_file in files
-        ]
-    )
+    return ListResponseSchema(elements=[file_to_dump_schema(file) for file in files])
 
 
 @router.post("/upload")
@@ -49,12 +44,5 @@ async def files_upload(
         )
     db.commit()
     return ListResponseSchema(
-        elements=[
-            FileDumpSchema(
-                id=satis_file.id,
-                url=satis_file.url,
-                filename=satis_file.filename,
-            )
-            for satis_file in to_return
-        ]
+        elements=[file_to_dump_schema(satis_file) for satis_file in to_return]
     )
