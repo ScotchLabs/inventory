@@ -9,6 +9,7 @@ import {
   ActionIcon,
   Stack,
   Button,
+  Modal,
   Anchor,
 } from "@mantine/core";
 import { IconUpload, IconX, IconTrash, IconPhoto } from "@tabler/icons-react";
@@ -16,6 +17,7 @@ import { Dropzone, IMAGE_MIME_TYPE, type FileWithPath } from "@mantine/dropzone"
 import {  type FileDumpSchema, type FileListDumpSchema } from "../types";
 import { API_URL} from '../environment'
 import { useEffect, useRef, useState } from "react";
+import { Fragment } from "react";
 
 
 
@@ -69,6 +71,39 @@ export function SatisImageEmbed({
       )}
     </Box>
   );
+}
+
+export function SatisImageEmbedModal(
+    {file,
+        opened,
+        onClose
+}: {file: FileDumpSchema,
+opened: boolean,
+onClose: () => void
+
+}) {
+    return <Modal
+    opened={opened}
+    title={file.filename}
+    onClose={onClose}
+    size='auto'
+    >
+    <SatisImageEmbed file={file} />
+    </Modal>
+}
+
+export function SatisImageEmbedModalButton({
+    onClick
+}: {onClick: () => void}) {
+return <Button variant="default"
+                radius="lg"
+                color="rgba(0, 0, 0, 1)"
+                size="compact-xs"
+                p={3}
+                leftSection={<IconPhoto size={16}/>}
+                styles={{section:{ marginRight: '3px' }}}
+                onClick={onClick}>
+          View file</Button>
 }
 
 async function satisUploadFiles({ files }: { files: FileWithPath[] }) {

@@ -1,4 +1,5 @@
 import { Fragment, useState } from "react";
+import {  type FileDumpSchema, type FileListDumpSchema } from "../types";
 import { API_URL } from '../environment'
 import { client } from "../api/client";
 import { format } from 'date-fns';
@@ -26,7 +27,7 @@ import "./Public.css";
 import sns_logo from "../assets/sns_logo.png";
 import { useDebouncedValue } from "@mantine/hooks";
 import { AddUpdateItem, type AddUpdateItemFormValues } from "./AddItem"
-import { FileLink } from "../components/Files";
+import { FileLink, SatisImageEmbedModal, SatisImageEmbedModalButton } from "../components/Files";
 
 export function Inventory(admin:boolean) {
   const [search, setSearch] = useState("");
@@ -185,6 +186,12 @@ export function Inventory(admin:boolean) {
 
 
   }
+  const [fileModalFile, setFileModalFile] = useState<FileDumpSchema | null>(null)
+  // We cannot control the modal open state based on `fileModalFile`
+  // Because the modal has a fade-out animation. If you set the file to null
+  // the file embed disappears while the modal is fading out and looks jank.
+  // So we never set the file to null. We set it each time before opening the modal
+  const [fileModalOpened, setFileModalOpened] = useState<boolean>(false)
 
   const rows = (assets?.elements ?? []).map((asset) =>
     admin?
@@ -206,7 +213,14 @@ export function Inventory(admin:boolean) {
         <Table.Td>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
         <Table.Td>{asset.last_updated_by_email}</Table.Td>
         <Table.Td>{asset.notes}</Table.Td>
-      <Table.Td>{asset.file && <FileLink file={asset.file}/>}</Table.Td>
+      <Table.Td>{asset.file && 
+          <SatisImageEmbedModalButton
+      onClick={() => {
+          setFileModalFile(asset.file)
+          setFileModalOpened(true)
+      }}
+      />}
+      </Table.Td>
       </Table.Tr>
     )
     :
@@ -222,7 +236,14 @@ export function Inventory(admin:boolean) {
       <Table.Td>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
       <Table.Td>{asset.last_updated_by_email}</Table.Td>
       <Table.Td>{asset.notes}</Table.Td>
-      <Table.Td>{asset.file && <FileLink file={asset.file}/>}</Table.Td>
+      <Table.Td>{asset.file && 
+          <SatisImageEmbedModalButton
+      onClick={() => {
+          setFileModalFile(asset.file)
+          setFileModalOpened(true)
+      }}
+      />}
+      </Table.Td>
     </Table.Tr>
   ));
 
@@ -278,6 +299,9 @@ export function Inventory(admin:boolean) {
             <Table.Tbody style={{ fontSize: "13px" }}>{rows}</Table.Tbody>
           </Table>
         </Table.ScrollContainer>
+        {fileModalFile && <SatisImageEmbedModal file={fileModalFile} opened={fileModalOpened}
+            onClose={() => setFileModalOpened(false)}
+            />}
       </div>
     </div>
   );
