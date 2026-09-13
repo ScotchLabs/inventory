@@ -3,7 +3,7 @@ import { useForm, } from "@mantine/form";
 import { useEffect, Suspense, useMemo, useState } from "react";
 import { useNavigate, Outlet } from "react-router";
 import { client } from "../api/client";
-import type { components } from "../api/schema";
+import { type CategoryDumpSchema, type LocationDumpSchema, type FileDumpSchema } from "../types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDisclosure } from "@mantine/hooks";
 import { SatisDropzone } from "../components/Files";
@@ -31,9 +31,6 @@ export function AdminProvider() {
   );
 }
 
-type CategoryDumpSchema = components['schemas']['CategoryDumpSchema']
-type LocationDumpSchema = components['schemas']['LocationDumpSchema']
-
 export type AddUpdateItemFormValues = {
     name: string,
     name_verbose: string,
@@ -43,7 +40,7 @@ export type AddUpdateItemFormValues = {
     categories: CategoryDumpSchema[],
     sub_categories: CategoryDumpSchema[],
     notes: string,
-    file_id: number | null,
+    files: FileDumpSchema[]
 }
 
 function MultiSelectWithObjects<T extends { id: number }>({
@@ -418,6 +415,7 @@ export function AddUpdateItem({ onSubmit, initialValues, id
           />
           <AddNewCategory type='secondary'></AddNewCategory>
 
+          <Stack> 
           <Textarea
             mt="sm"
             label="Notes"
@@ -425,8 +423,9 @@ export function AddUpdateItem({ onSubmit, initialValues, id
             rows={4}
             {...form.getInputProps('notes')}
           />
-          <Stack> 
             <SatisDropzone
+            initialFiles={initialValues.files}
+            onChange={(newFiles) => form.setFieldValue('files', newFiles)}
             />
 
             <Group justify="flex-end">

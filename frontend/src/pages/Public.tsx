@@ -1,4 +1,5 @@
 import { Fragment, useState } from "react";
+import {  type FileDumpSchema, type FileListDumpSchema } from "../types";
 import { API_URL } from '../environment'
 import { client } from "../api/client";
 import { format } from 'date-fns';
@@ -26,6 +27,7 @@ import "./Public.css";
 import sns_logo from "../assets/sns_logo.png";
 import { useDebouncedValue } from "@mantine/hooks";
 import { AddUpdateItem, type AddUpdateItemFormValues } from "./AddItem"
+import { FileLink, SatisImageEmbedModal, SatisImageEmbedModalButton } from "../components/Files";
 
 export function Inventory(admin:boolean) {
   const [search, setSearch] = useState("");
@@ -107,7 +109,7 @@ export function Inventory(admin:boolean) {
             categories: asset.categories ?? [],
             sub_categories: asset.sub_categories ?? [],
             notes: asset.notes,
-            file_id: asset.file_id ?? null,
+            files: !!asset.file ? [asset.file] : [],
           }
 
     const [opened, { open, close }] = useDisclosure(false);
@@ -155,10 +157,10 @@ export function Inventory(admin:boolean) {
                     categories: values.categories.filter((cat) => cat !== null).map((category) => category.id),
                     sub_categories: values.sub_categories.filter((cat) => cat !== null).map((category) => category.id),
                     notes: values.notes,
-                    file_id: values.file_id,
                     permanent_location_id: values.permanent_location?.id ?? null,
                     last_updated: new Date().toISOString(),
                     last_updated_by: session.user?.id,
+                    file_id: values.files.length > 0? values.files[0].id : null
                   }
                 })
               } catch (error) {
@@ -184,6 +186,12 @@ export function Inventory(admin:boolean) {
 
 
   }
+  const [fileModalFile, setFileModalFile] = useState<FileDumpSchema | null>(null)
+  // We cannot control the modal open state based on `fileModalFile`
+  // Because the modal has a fade-out animation. If you set the file to null
+  // the file embed disappears while the modal is fading out and looks jank.
+  // So we never set the file to null. We set it each time before opening the modal
+  const [fileModalOpened, setFileModalOpened] = useState<boolean>(false)
 
   const rows = (assets?.elements ?? []).map((asset) =>
     admin?
@@ -205,6 +213,14 @@ export function Inventory(admin:boolean) {
         <Table.Td>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
         <Table.Td>{asset.last_updated_by_email}</Table.Td>
         <Table.Td>{asset.notes}</Table.Td>
+      <Table.Td>{asset.file && 
+          <SatisImageEmbedModalButton
+      onClick={() => {
+          setFileModalFile(asset.file)
+          setFileModalOpened(true)
+      }}
+      />}
+      </Table.Td>
       </Table.Tr>
     )
     :
@@ -220,6 +236,14 @@ export function Inventory(admin:boolean) {
       <Table.Td>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
       <Table.Td>{asset.last_updated_by_email}</Table.Td>
       <Table.Td>{asset.notes}</Table.Td>
+      <Table.Td>{asset.file && 
+          <SatisImageEmbedModalButton
+      onClick={() => {
+          setFileModalFile(asset.file)
+          setFileModalOpened(true)
+      }}
+      />}
+      </Table.Td>
     </Table.Tr>
   ));
 
@@ -237,6 +261,7 @@ export function Inventory(admin:boolean) {
       <Table.Th>Last Updated</Table.Th>
       <Table.Th>Last Updated By</Table.Th>
       <Table.Th>Notes</Table.Th>
+      <Table.Th>Photo</Table.Th>
     </Table.Tr>
     :
     <Table.Tr>
@@ -250,6 +275,7 @@ export function Inventory(admin:boolean) {
       <Table.Th>Last Updated</Table.Th>
       <Table.Th>Last Updated By</Table.Th>
       <Table.Th>Notes</Table.Th>
+      <Table.Th>Photo</Table.Th>
     </Table.Tr>
 
   return (
@@ -273,6 +299,9 @@ export function Inventory(admin:boolean) {
             <Table.Tbody style={{ fontSize: "13px" }}>{rows}</Table.Tbody>
           </Table>
         </Table.ScrollContainer>
+        {fileModalFile && <SatisImageEmbedModal file={fileModalFile} opened={fileModalOpened}
+            onClose={() => setFileModalOpened(false)}
+            />}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+from app.files.schemas import FileDumpSchema
 from datetime import datetime
 
 from pydantic import BaseModel, Field
@@ -38,6 +39,7 @@ class AssetDumpSchema(AssetBaseSchema):
     sub_categories: list[CategoryDumpSchema] = Field(default_factory=list)
     permanent_location: LocationDumpSchema | None = None
     last_updated_by_email: str | None = None
+    file: FileDumpSchema | None = None
 
 
 class ListResponseSchema[T: BaseModel](BaseModel):

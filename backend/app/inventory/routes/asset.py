@@ -1,3 +1,5 @@
+from app.files.services import file_to_dump_schema
+from app.files.models import File
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import select, or_, update, func
@@ -56,11 +58,12 @@ def asset_to_dump_schema(asset: Asset) -> AssetDumpSchema:
         user = db.execute(
             select(User.email).where(User.id == asset.last_updated_by)
         ).scalar_one_or_none()
-        user_email = user[:user.find("@")] if user else None
+        user_email = user[: user.find("@")] if user else None
 
     permanent = db.execute(
         select(Location).where(Location.id == asset.permanent_location_id)
     ).scalar_one_or_none()
+    file = db.execute(select(File).where(File.id == asset.file_id)).scalar_one_or_none()
 
     return AssetDumpSchema(
         id=asset.id,
@@ -77,6 +80,7 @@ def asset_to_dump_schema(asset: Asset) -> AssetDumpSchema:
         last_updated=asset.last_updated,
         last_updated_by_email=user_email,
         notes=asset.notes,
+        file=file_to_dump_schema(file) if file is not None else None
     )
 
 

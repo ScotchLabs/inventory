@@ -113,10 +113,10 @@ function AddItemPopup() {
                     categories: values.categories.map((category) => category.id),
                     sub_categories: values.sub_categories.map((category) => category.id),
                     notes: values.notes,
-                    file_id: values.file_id,
                     permanent_location_id: values.permanent_location?.id,
                     last_updated: new Date().toISOString(),
                     last_updated_by: session.user?.id,
+                    file_id: values.files.length > 0? values.files[0].id : null
                   },
                 })
               } catch (error) {
@@ -134,7 +134,7 @@ function AddItemPopup() {
               categories: [],
               sub_categories: [],
               notes: '',
-              file_id: null,
+              files: [],
             }
           }
           id = {null}
