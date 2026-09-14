@@ -213,10 +213,10 @@ export function Inventory(admin:boolean) {
         <Table.Td>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
         <Table.Td>{asset.last_updated_by_email}</Table.Td>
         <Table.Td>{asset.notes}</Table.Td>
-      <Table.Td>{asset.file && 
+      <Table.Td>{asset.file &&
           <SatisImageEmbedModalButton
       onClick={() => {
-          setFileModalFile(asset.file)
+          if (asset.file) setFileModalFile(asset.file)
           setFileModalOpened(true)
       }}
       />}
@@ -236,10 +236,10 @@ export function Inventory(admin:boolean) {
       <Table.Td>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
       <Table.Td>{asset.last_updated_by_email}</Table.Td>
       <Table.Td>{asset.notes}</Table.Td>
-      <Table.Td>{asset.file && 
+      <Table.Td>{asset.file &&
           <SatisImageEmbedModalButton
       onClick={() => {
-          setFileModalFile(asset.file)
+          if (asset.file) setFileModalFile(asset.file)
           setFileModalOpened(true)
       }}
       />}
