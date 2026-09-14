@@ -16,8 +16,7 @@ import { IconUpload, IconX, IconTrash, IconPhoto } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE, type FileWithPath } from "@mantine/dropzone";
 import {  type FileDumpSchema, type FileListDumpSchema } from "../types";
 import { API_URL} from '../environment'
-import { useEffect, useRef, useState } from "react";
-import { Fragment } from "react";
+import { useEffect, useState } from "react";
 
 
 

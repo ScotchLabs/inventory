@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import {  type FileDumpSchema, type FileListDumpSchema } from "../types";
+import { type FileDumpSchema } from "../types";
 import { API_URL } from '../environment'
 import { client } from "../api/client";
 import { format } from 'date-fns';
@@ -27,7 +27,7 @@ import "./Public.css";
 import sns_logo from "../assets/sns_logo.png";
 import { useDebouncedValue } from "@mantine/hooks";
 import { AddUpdateItem, type AddUpdateItemFormValues } from "./AddItem"
-import { FileLink, SatisImageEmbedModal, SatisImageEmbedModalButton } from "../components/Files";
+import { SatisImageEmbedModal, SatisImageEmbedModalButton } from "../components/Files";
 
 export function Inventory(admin:boolean) {
   const [search, setSearch] = useState("");
