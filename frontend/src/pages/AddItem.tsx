@@ -113,23 +113,44 @@ function MultiSelectWithObjects<T extends { id: number }>({
 }
 
 export function AddNewCategory({ type }: { type: string }) {
-  const { data: categories } =
-    type === "primary"
-      ? client.useQuery("post", "/inventory/categories/list_primary")
-      : client.useQuery("post", "/inventory/categories/list_secondary");
+  const { data: primaryCategories } = client.useQuery(
+    "post",
+    "/inventory/categories/list_primary",
+  );
+  const { data: secondaryCategories } = client.useQuery(
+    "post",
+    "/inventory/categories/list_secondary",
+  );
+
   const form_inner = useForm({
     mode: "uncontrolled",
     initialValues: { category_name: "" },
     validate: {
-      category_name: (value) =>
-        value.length < 2
-          ? "Category name must be at least two characters"
-          : (categories?.categories ?? []).some(
-                (cat) =>
-                  cat.name.toLowerCase().trim() === value.toLowerCase().trim(),
-              )
-            ? "Category name already exists"
-            : null,
+      category_name: (value) => {
+        if (value.length < 2) {
+          return "Category name must be at least two characters";
+        }
+
+        const allPrimary = primaryCategories?.categories ?? [];
+        const allSecondary = secondaryCategories?.categories ?? [];
+
+        const primaryMatch = allPrimary.find(
+          (cat) =>
+            cat.name.toLowerCase().trim() === value.toLowerCase().trim(),
+        );
+        const secondaryMatch = allSecondary.find(
+          (cat) =>
+            cat.name.toLowerCase().trim() === value.toLowerCase().trim(),
+        );
+
+        if (primaryMatch) {
+          return "This name already exists as a Category";
+        }
+        if (secondaryMatch) {
+          return "This name already exists as a Sub-category";
+        }
+        return null;
+      },
     },
   });
   const [opened_inner, { open, close }] = useDisclosure(false);

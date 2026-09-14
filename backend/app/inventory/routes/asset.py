@@ -2,7 +2,7 @@ from app.files.services import file_to_dump_schema
 from app.files.models import File
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from sqlalchemy import select, or_, update, func
+from sqlalchemy import select, or_, update, func, delete
 
 from app.db import db
 from app.inventory.models.asset import Asset, AssetCategoryMap
@@ -210,8 +210,8 @@ def edit_asset(body: AssetUpdateSchema) -> SuccessResponse:
         )
     )
 
-    db.execute(select(AssetCategoryMap).where(AssetCategoryMap.asset_id == body.id))
-    db.query(AssetCategoryMap).filter(AssetCategoryMap.asset_id == body.id).delete()
+    # Delete existing category mappings for this asset
+    db.execute(delete(AssetCategoryMap).where(AssetCategoryMap.asset_id == body.id))
 
     for category in body.categories:
         db.add(
@@ -238,13 +238,15 @@ def edit_asset(body: AssetUpdateSchema) -> SuccessResponse:
 
 @router.delete("/delete/{id}")
 def delete_asset(id: int) -> SuccessResponse:
-    asset = db.query(Asset).filter(Asset.id == id).first()
+    asset = db.execute(select(Asset).where(Asset.id == id)).scalar_one_or_none()
 
     if asset is None:
         return SuccessResponse(success=False)
 
-    db.query(AssetCategoryMap).filter(AssetCategoryMap.asset_id == id).delete()
+    # Delete category mappings first
+    db.execute(delete(AssetCategoryMap).where(AssetCategoryMap.asset_id == id))
 
+    # Then delete the asset
     db.delete(asset)
     db.commit()
 
