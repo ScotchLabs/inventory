@@ -45,12 +45,15 @@ export function SatisImageEmbed({
         overflow: "hidden",
         pointerEvents: "all",
         maxHeight: "80vh",
-        maxWidth: "100%",
+        maxWidth: "90vw",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
       onClick={(event) => event.stopPropagation()}
       onMouseDown={(event) => event.stopPropagation()}
     >
-      <Image src={file.url} h="auto" w="auto" fit="contain" alt="File upload" />
+      <Image src={file.url} h="100%" w="100%" fit="contain" alt="File upload" style={{ maxHeight: "80vh", maxWidth: "90vw" }} />
 
       {onDelete && (
         <ActionIcon
