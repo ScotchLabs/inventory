@@ -1,9 +1,18 @@
-import { Skeleton, Stack, Group, Container, Anchor, Button, Modal, MantineProvider } from "@mantine/core";
-import { API_URL } from '../environment'
-import { useDisclosure } from '@mantine/hooks';
+import {
+  Skeleton,
+  Stack,
+  Group,
+  Container,
+  Anchor,
+  Button,
+  Modal,
+  MantineProvider,
+} from "@mantine/core";
+import { API_URL } from "../environment";
+import { useDisclosure } from "@mantine/hooks";
 import { useEffect, Suspense, Fragment } from "react";
 import { useNavigate, Outlet } from "react-router";
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from "@tanstack/react-query";
 import { client } from "../api/client";
 import { Inventory, variantColorResolver } from "./Public";
 import { AddUpdateItem } from "./AddItem";
@@ -39,12 +48,7 @@ const links = [
 
 export function FooterSimple() {
   const items = links.map((link) => (
-    <Anchor<"a">
-      c="dimmed"
-      key={link.label}
-      href={link.link}
-      size="sm"
-    >
+    <Anchor<"a"> c="dimmed" key={link.label} href={link.link} size="sm">
       {link.label}
     </Anchor>
   ));
@@ -66,7 +70,11 @@ function Logout() {
   const handleLogout = () => {
     window.location.href = `${API_URL}/users/auth/logout`;
   };
-  return <Button variant="default" color="rgba(0, 0, 0, 1)" onClick={handleLogout}>Logout</Button>;
+  return (
+    <Button variant="default" color="rgba(0, 0, 0, 1)" onClick={handleLogout}>
+      Logout
+    </Button>
+  );
 }
 
 function AddItemPopup() {
@@ -74,23 +82,23 @@ function AddItemPopup() {
   const queryClient = useQueryClient();
 
   const { mutateAsync: createAsset } = client.useMutation(
-        'post',
-        '/inventory/asset/create',
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries({
-              queryKey: ["post", "/inventory/asset/list"],
-              exact: false
-            });
-            close()
-          },
-        }
-      );
-  
+    "post",
+    "/inventory/asset/create",
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["post", "/inventory/asset/list"],
+          exact: false,
+        });
+        close();
+      },
+    },
+  );
+
   const { data: session } = client.useSuspenseQuery(
-        "get",
-        "/users/users/current-session",
-      );
+    "get",
+    "/users/users/current-session",
+  );
 
   return (
     <>
@@ -98,47 +106,54 @@ function AddItemPopup() {
         opened={opened}
         onClose={close}
         title="Add a new item to inventory"
-        styles={{ title: {color: 'var(--mantine-color-black)', fontSize: '1.25rem', fontWeight: 700}, }}
+        styles={{
+          title: {
+            color: "var(--mantine-color-black)",
+            fontSize: "1.25rem",
+            fontWeight: 700,
+          },
+        }}
         radius={0}
-        transitionProps={{ transition: 'fade', duration: 200 }}
+        transitionProps={{ transition: "fade", duration: 200 }}
       >
-        <AddUpdateItem onSubmit={async (values) => {
-              try {
-                await createAsset({
-                  body: {
-                    name: values.name,
-                    name_verbose: values.name_verbose,
-                    quantity: values.quantity,
-                    current_location: values.current_location,
-                    categories: values.categories.map((category) => category.id),
-                    sub_categories: values.sub_categories.map((category) => category.id),
-                    notes: values.notes,
-                    permanent_location_id: values.permanent_location?.id,
-                    last_updated: new Date().toISOString(),
-                    last_updated_by: session.user?.id,
-                    file_id: values.files.length > 0? values.files[0].id : null
-                  },
-                })
-              } catch (error) {
-                console.error('Failed to create item:', error);
-                throw error;
-              }
-            }}
-          initialValues = {
-            {
-              name: '',
-              name_verbose: '',
-              quantity: 1,
-              current_location: '',
-              permanent_location: null,
-              categories: [],
-              sub_categories: [],
-              notes: '',
-              files: [],
+        <AddUpdateItem
+          onSubmit={async (values) => {
+            try {
+              await createAsset({
+                body: {
+                  name: values.name,
+                  name_verbose: values.name_verbose,
+                  quantity: values.quantity,
+                  current_location: values.current_location,
+                  categories: values.categories.map((category) => category.id),
+                  sub_categories: values.sub_categories.map(
+                    (category) => category.id,
+                  ),
+                  notes: values.notes,
+                  permanent_location_id: values.permanent_location?.id,
+                  last_updated: new Date().toISOString(),
+                  last_updated_by: session.user?.id,
+                  file_id: values.files.length > 0 ? values.files[0].id : null,
+                },
+              });
+            } catch (error) {
+              console.error("Failed to create item:", error);
+              throw error;
             }
-          }
-          id = {null}
-          />
+          }}
+          initialValues={{
+            name: "",
+            name_verbose: "",
+            quantity: 1,
+            current_location: "",
+            permanent_location: null,
+            categories: [],
+            sub_categories: [],
+            notes: "",
+            files: [],
+          }}
+          id={null}
+        />
       </Modal>
 
       <Button variant="default" color="rgba(0, 0, 0, 1)" onClick={open}>
@@ -149,7 +164,7 @@ function AddItemPopup() {
 }
 
 export function InventoryTable() {
-  const InventoryPrivate = Inventory(true)
+  const InventoryPrivate = Inventory(true);
 
   return (
     <MantineProvider theme={{ variantColorResolver }}>
@@ -176,7 +191,13 @@ export function InventoryTable() {
             </div>
 
             <div style={{ marginLeft: "auto" }}>
-              <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  justifyContent: "center",
+                }}
+              >
                 <Logout></Logout>
                 <AddItemPopup></AddItemPopup>
               </div>
@@ -203,7 +224,7 @@ export function InventoryTable() {
               gap: "30px",
             }}
           >
-          {InventoryPrivate}
+            {InventoryPrivate}
           </div>
         </Stack>
         <FooterSimple></FooterSimple>
@@ -217,6 +238,5 @@ export function AdminPage() {
     <div>
       <InventoryTable></InventoryTable>
     </div>
-  )
+  );
 }
-

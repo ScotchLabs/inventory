@@ -1,8 +1,6 @@
 import "@mantine/core/styles.css";
 import "@mantine/dropzone/styles.css";
-import {
-  MantineProvider,
-} from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router";
 import { PublicTable } from "./pages/Public";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
