@@ -44,11 +44,13 @@ export function SatisImageEmbed({
         borderRadius: "var(--mantine-radius-md)",
         overflow: "hidden",
         pointerEvents: "all",
+        maxHeight: "80vh",
+        maxWidth: "100%",
       }}
       onClick={(event) => event.stopPropagation()}
       onMouseDown={(event) => event.stopPropagation()}
     >
-      <Image src={file.url} h="auto" w="auto" alt="File upload" />
+      <Image src={file.url} h="auto" w="auto" fit="contain" alt="File upload" />
 
       {onDelete && (
         <ActionIcon

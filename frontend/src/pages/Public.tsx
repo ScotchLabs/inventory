@@ -215,27 +215,27 @@ export function Inventory(admin: boolean) {
   const rows = (assets?.elements ?? []).map((asset) =>
     admin ? (
       <Table.Tr key={asset.id}>
-        <Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
           <Stack gap="2px">
             <UpdateItem id={asset.id}></UpdateItem>
             <DeleteItem id={asset.id}></DeleteItem>
           </Stack>
         </Table.Td>
-        <Table.Td>{asset.name}</Table.Td>
-        <Table.Td>{asset.name_verbose}</Table.Td>
-        <Table.Td>{asset.quantity}</Table.Td>
-        <Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.name}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.name_verbose}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.quantity}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
           {asset.categories?.map((category) => category.name)?.join(", ")}
         </Table.Td>
-        <Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
           {asset.sub_categories?.map((category) => category.name).join(", ")}
         </Table.Td>
-        <Table.Td>{asset.current_location}</Table.Td>
-        <Table.Td>{asset.permanent_location?.name}</Table.Td>
-        <Table.Td>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
-        <Table.Td>{asset.last_updated_by_email}</Table.Td>
-        <Table.Td>{asset.notes}</Table.Td>
-        <Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.current_location}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.permanent_location?.name}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.last_updated_by_email}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.notes}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
           {asset.file && (
             <SatisImageEmbedModalButton
               onClick={() => {
@@ -248,21 +248,21 @@ export function Inventory(admin: boolean) {
       </Table.Tr>
     ) : (
       <Table.Tr key={asset.id}>
-        <Table.Td>{asset.name}</Table.Td>
-        <Table.Td>{asset.name_verbose}</Table.Td>
-        <Table.Td>{asset.quantity}</Table.Td>
-        <Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.name}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.name_verbose}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.quantity}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
           {asset.categories?.map((category) => category.name)?.join(", ")}
         </Table.Td>
-        <Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
           {asset.sub_categories?.map((category) => category.name).join(", ")}
         </Table.Td>
-        <Table.Td>{asset.current_location}</Table.Td>
-        <Table.Td>{asset.permanent_location?.name}</Table.Td>
-        <Table.Td>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
-        <Table.Td>{asset.last_updated_by_email}</Table.Td>
-        <Table.Td>{asset.notes}</Table.Td>
-        <Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.current_location}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.permanent_location?.name}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.last_updated_by_email}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>{asset.notes}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
           {asset.file && (
             <SatisImageEmbedModalButton
               onClick={() => {
