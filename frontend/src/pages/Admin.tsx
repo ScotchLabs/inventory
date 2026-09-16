@@ -168,7 +168,7 @@ export function InventoryTable() {
 
   return (
     <MantineProvider theme={{ variantColorResolver }}>
-      <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: "100vh" }}>
         <Stack style={{ flex: 1 }}>
           <div
             style={{
