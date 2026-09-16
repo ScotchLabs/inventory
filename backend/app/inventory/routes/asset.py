@@ -92,15 +92,15 @@ def list_assets(body: AssetSearchParems) -> ListResponseSchema[AssetDumpSchema]:
     if body.search is not None:
         query = query.where(
             or_(
-                Asset.name.ilike(f"{body.search}%"),
-                Asset.name_verbose.ilike(f"{body.search}%"),
-                Asset.current_location.ilike(f"{body.search}%"),
-                Asset.notes.ilike(f"{body.search}%"),
+                Asset.name.ilike(f"%{body.search}%"),
+                Asset.name_verbose.ilike(f"%{body.search}%"),
+                Asset.current_location.ilike(f"%{body.search}%"),
+                Asset.notes.ilike(f"%{body.search}%"),
                 select(Category.id)
                 .select_from(AssetCategoryMap)
                 .join(Category, Category.id == AssetCategoryMap.category_id)
                 .where(
-                    Category.name.ilike(f"{body.search}%"),
+                    Category.name.ilike(f"%{body.search}%"),
                     AssetCategoryMap.asset_id == Asset.id,
                 )
                 .correlate(Asset)
@@ -108,7 +108,7 @@ def list_assets(body: AssetSearchParems) -> ListResponseSchema[AssetDumpSchema]:
                 select(Location.id)
                 .select_from(Location)
                 .where(
-                    Location.name.ilike(f"{body.search}%"),
+                    Location.name.ilike(f"%{body.search}%"),
                     Asset.permanent_location_id == Location.id,
                 )
                 .correlate(Asset)
@@ -116,7 +116,7 @@ def list_assets(body: AssetSearchParems) -> ListResponseSchema[AssetDumpSchema]:
                 select(User.id)
                 .select_from(User)
                 .where(
-                    User.email.ilike(f"{body.search}%"),
+                    User.email.ilike(f"%{body.search}%"),
                     Asset.last_updated_by == User.id,
                 )
                 .correlate(Asset)
