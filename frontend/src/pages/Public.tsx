@@ -419,11 +419,16 @@ export default function Public() {
 
   return (
     <div
-      style={{ display: "flex", flexDirection: "column", minHeight: "100vh", height: "100vh" }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        height: "100vh",
+      }}
     >
       <MantineProvider theme={{ variantColorResolver }}>
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-          <Stack style={{ flex: 1, minHeight: 0 }}>
+          <Stack>
             <div
               style={{
                 display: "flex",
