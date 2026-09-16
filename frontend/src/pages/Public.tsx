@@ -332,7 +332,7 @@ export function Inventory(admin: boolean) {
           leftSection={<IconSearch size={16} stroke={1.5} />}
           onChange={(event) => setSearch(event.currentTarget.value)}
         />
-        <Table.ScrollContainer minWidth={500} style={{ flex: 1 }}>
+        <Table.ScrollContainer minWidth={500} style={{ flex: 1, maxHeight: "100%" }}>
           <Table withTableBorder highlightOnHover stickyHeader>
             <Table.Thead>{headers}</Table.Thead>
             <Table.Tbody style={{ fontSize: "13px" }}>{rows}</Table.Tbody>
