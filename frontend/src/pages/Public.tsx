@@ -422,7 +422,7 @@ export default function Public() {
       style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
     >
       <MantineProvider theme={{ variantColorResolver }}>
-        <Fragment>
+        <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
           <Stack style={{ flex: 1 }}>
             <div
               style={{
@@ -473,7 +473,7 @@ export default function Public() {
             </div>
           </Stack>
           <FooterSimple></FooterSimple>
-        </Fragment>
+        </div>
       </MantineProvider>
     </div>
   );
