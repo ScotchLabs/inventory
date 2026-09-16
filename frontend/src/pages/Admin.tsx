@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { API_URL } from "../environment";
 import { useDisclosure } from "@mantine/hooks";
-import { useEffect, Suspense, Fragment } from "react";
+import { useEffect, Suspense } from "react";
 import { useNavigate, Outlet } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { client } from "../api/client";
