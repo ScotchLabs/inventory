@@ -332,7 +332,7 @@ export function Inventory(admin: boolean) {
           leftSection={<IconSearch size={16} stroke={1.5} />}
           onChange={(event) => setSearch(event.currentTarget.value)}
         />
-        <Table.ScrollContainer minWidth={500} maxHeight={300}>
+        <Table.ScrollContainer minWidth={500}>
           <Table withTableBorder highlightOnHover stickyHeader>
             <Table.Thead>{headers}</Table.Thead>
             <Table.Tbody style={{ fontSize: "13px" }}>{rows}</Table.Tbody>
@@ -428,7 +428,7 @@ export default function Public() {
     >
       <MantineProvider theme={{ variantColorResolver }}>
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-          <Stack>
+          <Stack style={{ flex: 1, minHeight: 0 }}>
             <div
               style={{
                 display: "flex",
