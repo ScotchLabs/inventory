@@ -448,7 +448,7 @@ export default function Public() {
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
-              marginTop: "70px",
+              marginTop: "40px",
               gap: "30px",
             }}
           >
