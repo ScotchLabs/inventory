@@ -135,12 +135,10 @@ export function AddNewCategory({ type }: { type: string }) {
         const allSecondary = secondaryCategories?.categories ?? [];
 
         const primaryMatch = allPrimary.find(
-          (cat) =>
-            cat.name.toLowerCase().trim() === value.toLowerCase().trim(),
+          (cat) => cat.name.toLowerCase().trim() === value.toLowerCase().trim(),
         );
         const secondaryMatch = allSecondary.find(
-          (cat) =>
-            cat.name.toLowerCase().trim() === value.toLowerCase().trim(),
+          (cat) => cat.name.toLowerCase().trim() === value.toLowerCase().trim(),
         );
 
         if (primaryMatch) {

@@ -235,7 +235,9 @@ export function InventoryTable() {
 
 export function AdminPage() {
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <div
+      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+    >
       <InventoryTable></InventoryTable>
     </div>
   );

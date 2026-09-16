@@ -53,7 +53,14 @@ export function SatisImageEmbed({
       onClick={(event) => event.stopPropagation()}
       onMouseDown={(event) => event.stopPropagation()}
     >
-      <Image src={file.url} h="100%" w="100%" fit="contain" alt="File upload" style={{ maxHeight: "80vh", maxWidth: "90vw" }} />
+      <Image
+        src={file.url}
+        h="100%"
+        w="100%"
+        fit="contain"
+        alt="File upload"
+        style={{ maxHeight: "80vh", maxWidth: "90vw" }}
+      />
 
       {onDelete && (
         <ActionIcon

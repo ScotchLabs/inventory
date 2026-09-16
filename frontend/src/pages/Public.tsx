@@ -230,10 +230,18 @@ export function Inventory(admin: boolean) {
         <Table.Td style={{ textAlign: "left" }}>
           {asset.sub_categories?.map((category) => category.name).join(", ")}
         </Table.Td>
-        <Table.Td style={{ textAlign: "left" }}>{asset.current_location}</Table.Td>
-        <Table.Td style={{ textAlign: "left" }}>{asset.permanent_location?.name}</Table.Td>
-        <Table.Td style={{ textAlign: "left" }}>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
-        <Table.Td style={{ textAlign: "left" }}>{asset.last_updated_by_email}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
+          {asset.current_location}
+        </Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
+          {asset.permanent_location?.name}
+        </Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
+          {format(asset.last_updated, "MMMM do yyyy")}
+        </Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
+          {asset.last_updated_by_email}
+        </Table.Td>
         <Table.Td style={{ textAlign: "left" }}>{asset.notes}</Table.Td>
         <Table.Td style={{ textAlign: "left" }}>
           {asset.file && (
@@ -257,10 +265,18 @@ export function Inventory(admin: boolean) {
         <Table.Td style={{ textAlign: "left" }}>
           {asset.sub_categories?.map((category) => category.name).join(", ")}
         </Table.Td>
-        <Table.Td style={{ textAlign: "left" }}>{asset.current_location}</Table.Td>
-        <Table.Td style={{ textAlign: "left" }}>{asset.permanent_location?.name}</Table.Td>
-        <Table.Td style={{ textAlign: "left" }}>{format(asset.last_updated, "MMMM do yyyy")}</Table.Td>
-        <Table.Td style={{ textAlign: "left" }}>{asset.last_updated_by_email}</Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
+          {asset.current_location}
+        </Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
+          {asset.permanent_location?.name}
+        </Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
+          {format(asset.last_updated, "MMMM do yyyy")}
+        </Table.Td>
+        <Table.Td style={{ textAlign: "left" }}>
+          {asset.last_updated_by_email}
+        </Table.Td>
         <Table.Td style={{ textAlign: "left" }}>{asset.notes}</Table.Td>
         <Table.Td style={{ textAlign: "left" }}>
           {asset.file && (
@@ -402,62 +418,64 @@ export default function Public() {
   const Table = Inventory(false);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <div
+      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+    >
       <MantineProvider theme={{ variantColorResolver }}>
         <Fragment>
           <Stack style={{ flex: 1 }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              width: "90%",
-              marginRight: "auto",
-              marginLeft: "auto",
-              marginTop: "30px",
-              gap: "50px",
-            }}
-          >
-            <img src={sns_logo} alt="logo" width="150"></img>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                width: "90%",
+                marginRight: "auto",
+                marginLeft: "auto",
+                marginTop: "30px",
+                gap: "50px",
+              }}
+            >
+              <img src={sns_logo} alt="logo" width="150"></img>
 
-            <div>
-              <h2 style={{ color: "black", fontSize: "32px" }}>
-                {" "}
-                Scotch'n'Soda Shop Inventory
-              </h2>
+              <div>
+                <h2 style={{ color: "black", fontSize: "32px" }}>
+                  {" "}
+                  Scotch'n'Soda Shop Inventory
+                </h2>
+              </div>
+
+              <div style={{ marginLeft: "auto" }}>
+                <Admin></Admin>
+                <p
+                  style={{
+                    fontSize: "12px",
+                    maxWidth: "300px",
+                    marginTop: "10px",
+                    minWidth: 0,
+                  }}
+                >
+                  If you are a TAH looking to add or remove an item, please log
+                  in as admin.
+                </p>
+              </div>
             </div>
 
-            <div style={{ marginLeft: "auto" }}>
-              <Admin></Admin>
-              <p
-                style={{
-                  fontSize: "12px",
-                  maxWidth: "300px",
-                  marginTop: "10px",
-                  minWidth: 0,
-                }}
-              >
-                If you are a TAH looking to add or remove an item, please log in
-                as admin.
-              </p>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+                marginTop: "30px",
+                gap: "30px",
+              }}
+            >
+              {Table}
             </div>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              marginTop: "30px",
-              gap: "30px",
-            }}
-          >
-            {Table}
-          </div>
-        </Stack>
-        <FooterSimple></FooterSimple>
-      </Fragment>
-    </MantineProvider>
+          </Stack>
+          <FooterSimple></FooterSimple>
+        </Fragment>
+      </MantineProvider>
     </div>
   );
 }
