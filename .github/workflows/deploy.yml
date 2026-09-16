@@ -24,6 +24,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /opt/inventory
+            docker builder prune -a -f
+            docker system prune -a --volumes -f
+
             git fetch origin
             git reset --hard origin/main
             docker build --no-cache -t sns-inventory-backend:latest ./backend
