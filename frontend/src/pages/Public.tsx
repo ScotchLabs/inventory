@@ -287,7 +287,7 @@ export function Inventory(admin: boolean) {
       <Table.Th>Current Location</Table.Th>
       <Table.Th>Permanent Home</Table.Th>
       <Table.Th>Last Updated</Table.Th>
-      <Table.Th>Last Updated By</Table.Th>
+      <Table.Th>Updated By</Table.Th>
       <Table.Th>Notes</Table.Th>
       <Table.Th>Photo</Table.Th>
     </Table.Tr>
@@ -301,7 +301,7 @@ export function Inventory(admin: boolean) {
       <Table.Th>Current Location</Table.Th>
       <Table.Th>Permanent Home</Table.Th>
       <Table.Th>Last Updated</Table.Th>
-      <Table.Th>Last Updated By</Table.Th>
+      <Table.Th>Updated By</Table.Th>
       <Table.Th>Notes</Table.Th>
       <Table.Th>Photo</Table.Th>
     </Table.Tr>
