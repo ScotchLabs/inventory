@@ -402,9 +402,10 @@ export default function Public() {
   const Table = Inventory(false);
 
   return (
-    <MantineProvider theme={{ variantColorResolver }}>
-      <Fragment>
-        <Stack style={{ flex: 1 }}>
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <MantineProvider theme={{ variantColorResolver }}>
+        <Fragment>
+          <Stack style={{ flex: 1 }}>
           <div
             style={{
               display: "flex",
@@ -457,6 +458,7 @@ export default function Public() {
         <FooterSimple></FooterSimple>
       </Fragment>
     </MantineProvider>
+    </div>
   );
 }
 
