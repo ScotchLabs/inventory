@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { type FileDumpSchema } from "../types";
 import { API_URL } from "../environment";
 import { client } from "../api/client";
@@ -419,11 +419,11 @@ export default function Public() {
 
   return (
     <div
-      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+      style={{ display: "flex", flexDirection: "column", minHeight: "100vh", height: "100vh" }}
     >
       <MantineProvider theme={{ variantColorResolver }}>
-        <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: "100vh" }}>
-          <Stack style={{ flex: 1 }}>
+        <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+          <Stack style={{ flex: 1, minHeight: 0 }}>
             <div
               style={{
                 display: "flex",
