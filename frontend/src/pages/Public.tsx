@@ -411,6 +411,7 @@ export function Inventory({admin} : {admin: boolean} ) {
             leftSection={<IconSearch size={16} stroke={1.5} />}
             onChange={(event) => setSearch(event.currentTarget.value)}
             style={{ flex: "1 1 500px", minWidth: "300px" }}
+            size="xs"
           />
           <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", overflow: "visible" }}>
             <div style={{ width: "190px", height: "36px", display: "flex", alignItems: "center", overflow: "visible", flexShrink: 0 }}><LocationFilter /></div>
