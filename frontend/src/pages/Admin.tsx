@@ -58,7 +58,7 @@ export function FooterSimple() {
       <Container className={classes.inner}>
         <p style={{ fontSize: "12px" }}>
           {" "}
-          To report bugs reach out to Will & Madison
+          To report bugs reach out to current webmaster
         </p>
         <Group className={classes.links}>{items}</Group>
       </Container>
@@ -164,7 +164,6 @@ function AddItemPopup() {
 }
 
 export function InventoryTable() {
-  const InventoryPrivate = Inventory(true);
 
   return (
     <MantineProvider theme={{ variantColorResolver }}>
@@ -181,7 +180,7 @@ export function InventoryTable() {
               gap: "50px",
             }}
           >
-            <img src={sns_logo} alt="logo" width="150"></img>
+            <a href="https://www.snstheatre.org"> <img src={sns_logo} alt="logo" width="150"></img> </a>
 
             <div>
               <h2 style={{ color: "black", fontSize: "32px" }}>
@@ -223,7 +222,7 @@ export function InventoryTable() {
               gap: "30px",
             }}
           >
-            {InventoryPrivate}
+          <Inventory admin={true}/>
           </div>
         </Stack>
         <FooterSimple></FooterSimple>

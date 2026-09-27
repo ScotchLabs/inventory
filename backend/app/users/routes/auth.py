@@ -46,11 +46,11 @@ async def callback(request: Request):
         user_info = token.get("userinfo")
         email = user_info["email"]
 
+
+        unauthorized_response = RedirectResponse(url=f"{sns_environment.web_root_url}?status=unauthorized")
         # Check if email is in admin allowlist
         if email not in ADMIN_EMAILS:
-            raise HTTPException(
-                status_code=403, detail="Access denied. Email not authorized."
-            )
+            return unauthorized_response
 
         user = get_or_create_user_for_email(email)
         sns_token = create_token_for_user(user.id)
@@ -80,11 +80,6 @@ async def callback(request: Request):
 @public_route
 async def login(request: Request):
     try:
-        if sns_environment.deployment_type == SNSDeploymentType.LOCALDEV:
-            response= localdev_login("madisone@andrew.cmu.edu")
-            db.commit()
-            return response
-        else:
             return await oauth.google.authorize_redirect(
                 request, f"{sns_environment.api_root_url}/users/auth/google/callback"
             )

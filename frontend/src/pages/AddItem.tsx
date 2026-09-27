@@ -60,7 +60,7 @@ export type AddUpdateItemFormValues = {
   files: FileDumpSchema[];
 };
 
-function MultiSelectWithObjects<T extends { id: number }>({
+export function MultiSelectWithObjects<T extends { id: number }>({
   data,
   getItemLabel,
   value,
@@ -70,6 +70,7 @@ function MultiSelectWithObjects<T extends { id: number }>({
   label,
   placeholder,
   error,
+  size,
 }: {
   data: T[];
   getItemLabel: (_: T) => string;
@@ -80,6 +81,7 @@ function MultiSelectWithObjects<T extends { id: number }>({
   label?: string;
   placeholder?: string;
   error?: string | false | null;
+  size?: string 
 }) {
   const mappedData = useMemo(
     () => new Map(data.map((item) => [item.id.toString(), item])),
@@ -90,7 +92,7 @@ function MultiSelectWithObjects<T extends { id: number }>({
 
   return (
     <MultiSelect
-      mt="sm"
+      mt={label ? "sm" : 0}
       label={label}
       placeholder={placeholder}
       data={data.map((item) => ({
@@ -108,6 +110,13 @@ function MultiSelectWithObjects<T extends { id: number }>({
       onBlur={onBlur}
       searchable
       error={error}
+      size={size}
+      styles={{
+        input: {
+          maxHeight: "36px",
+          overflowY: "auto",
+        },
+      }}
     />
   );
 }

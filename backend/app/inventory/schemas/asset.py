@@ -20,6 +20,7 @@ class AssetBaseSchema(BaseModel):
 
 class AssetSearchParems(BaseModel):
     search: str | None = None
+    permanent_location_id : int | None = None
     categories: list[int] | None = None
     sub_categories: list[int] | None = None
 

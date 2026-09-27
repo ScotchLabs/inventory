@@ -1,10 +1,12 @@
-import { useState } from "react";
-import { type FileDumpSchema } from "../types";
+import { useEffect, useRef, useState } from "react";
+import { type FileDumpSchema, type CategoryDumpSchema } from "../types";
 import { API_URL } from "../environment";
 import { client } from "../api/client";
 import { format } from "date-fns";
 import { useDisclosure } from "@mantine/hooks";
+import { Notifications, notifications } from '@mantine/notifications';
 import "@mantine/core/styles.css";
+import '@mantine/notifications/styles.css';
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Table,
@@ -20,23 +22,34 @@ import {
   rgba,
   darken,
   Modal,
+  Select,
 } from "@mantine/core";
 import { IconSearch, IconEdit, IconTrash } from "@tabler/icons-react";
 import classes from "./FooterSimple.module.css";
 import "./Public.css";
 import sns_logo from "../assets/sns_logo.png";
 import { useDebouncedValue } from "@mantine/hooks";
-import { AddUpdateItem, type AddUpdateItemFormValues } from "./AddItem";
+import { AddUpdateItem, MultiSelectWithObjects, type AddUpdateItemFormValues
+ } from "./AddItem";
 import {
   SatisImageEmbedModal,
   SatisImageEmbedModalButton,
 } from "../components/Files";
+import { useSearchParams } from "react-router";
 
-export function Inventory(admin: boolean) {
+export function Inventory({admin} : {admin: boolean} ) {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 300)[0];
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState< CategoryDumpSchema[] | null>(null);
+  const [selectedSubCategories, setSelectedSubCategories] = useState< CategoryDumpSchema[] | null>(null);
   const { data: assets } = client.useQuery("post", "/inventory/asset/list", {
-    body: { search: debouncedSearch },
+    body: {
+      search: debouncedSearch,
+      permanent_location_id: selectedLocation ? parseInt(selectedLocation) : null,
+      categories: selectedCategories ? selectedCategories.map((category) => category.id)  : null,
+      sub_categories: selectedSubCategories ? selectedSubCategories.map((category) => category.id)  : null
+    },
   });
 
   function DeleteItem({ id }: { id: number }) {
@@ -292,6 +305,72 @@ export function Inventory(admin: boolean) {
     ),
   );
 
+  function LocationFilter(){
+      const { data: perm_locations } = client.useQuery(
+        "post",
+        "/inventory/locations/list",
+      );
+
+    return (
+          <Select
+            size="xs"
+            placeholder="Filter Location"
+            value={selectedLocation}
+            data={(perm_locations?.locations ?? []).map((loc) => ({
+              value: loc.id.toString(),
+              label: loc.name,
+            }))}
+            onChange={(event) => setSelectedLocation(event)}
+            searchable
+            clearable
+          />
+      );
+  }
+
+
+  function CategoryFilter(){
+    const { data: categories } = client.useQuery(
+      "post",
+      "/inventory/categories/list_primary",
+    );
+
+    return (
+          <MultiSelectWithObjects
+                    data={categories?.categories ?? []}
+                    getItemLabel={(cat) => cat.name}
+                    value={selectedCategories ?? []}
+                    onChange={(selected) => setSelectedCategories(selected)}
+                    onFocus={() => {}}
+                    onBlur={() => {}}
+                    placeholder="Filter Category"
+                    size="xs"
+          />
+      );
+  }
+
+
+  function SubcategoryFilter(){
+    const { data: subcategories } = client.useQuery(
+      "post",
+      "/inventory/categories/list_secondary",
+    );
+
+    return (
+          <MultiSelectWithObjects
+                    data={subcategories?.categories ?? []}
+                    getItemLabel={(cat) => cat.name}
+                    value={selectedSubCategories ?? []}
+                    onChange={(selected) => setSelectedSubCategories(selected)}
+                    onFocus={() => {}}
+                    onBlur={() => {}}
+                    placeholder="Filter Subcategory"
+                    size="xs"
+          />
+      );
+  }  
+
+
+
   const headers = admin ? (
     <Table.Tr>
       <Table.Th>Interact</Table.Th>
@@ -326,12 +405,19 @@ export function Inventory(admin: boolean) {
   return (
     <div style={{ display: "flex", justifyContent: "center", width: "100%", flex: 1, minHeight: 0 }}>
       <div style={{ width: "90%", marginLeft: "5%", marginRight: "5%", display: "flex", flexDirection: "column", minHeight: 0 }}>
-        <TextInput
-          placeholder="Search by any field"
-          mb="md"
-          leftSection={<IconSearch size={16} stroke={1.5} />}
-          onChange={(event) => setSearch(event.currentTarget.value)}
-        />
+        <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", marginBottom: "12px", overflow: "visible", flexWrap: "wrap" }}>
+          <TextInput
+            placeholder="Search by any field"
+            leftSection={<IconSearch size={16} stroke={1.5} />}
+            onChange={(event) => setSearch(event.currentTarget.value)}
+            style={{ flex: "1 1 500px", minWidth: "300px" }}
+          />
+          <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", overflow: "visible" }}>
+            <div style={{ width: "190px", height: "36px", display: "flex", alignItems: "center", overflow: "visible", flexShrink: 0 }}><LocationFilter /></div>
+            <div style={{ width: "190px", height: "36px", display: "flex", alignItems: "center", overflow: "visible", flexShrink: 0 }}><CategoryFilter /></div>
+            <div style={{ width: "190px", height: "36px", display: "flex", alignItems: "center", overflow: "visible", flexShrink: 0 }}><SubcategoryFilter /></div>
+          </div>
+        </div>
         <Table.ScrollContainer minWidth={500} style={{ flex: 1 }} maxHeight="calc(100vh - 400px)">
           <Table withTableBorder highlightOnHover stickyHeader>
             <Table.Thead>{headers}</Table.Thead>
@@ -373,7 +459,7 @@ export const variantColorResolver = (input: any) => {
 const links = [
   {
     link: "mailto:snstheatre.tc@gmail.com?subject=SNS%20Inventory%20Item%20Request",
-    label: "Request Item",
+    label: "Rent Item",
   },
   { link: "https://www.snstheatre.org/", label: "Scotch'n'Soda Home" },
 ];
@@ -390,7 +476,7 @@ export function FooterSimple() {
       <Container className={classes.inner}>
         <p style={{ fontSize: "12px" }}>
           {" "}
-          To report bugs reach out to Will & Madison
+          To report bugs reach out to current webmaster
         </p>
         <Group className={classes.links}>{items}</Group>
       </Container>
@@ -415,7 +501,20 @@ function Admin() {
 }
 
 export default function Public() {
-  const Table = Inventory(false);
+  const [params, setParams] = useSearchParams()
+  const count = useRef(0);
+  useEffect(() => {if (params.get("status") === "unauthorized" && (count.current === 0)) {
+    notifications.show({
+          title: 'Unauthorized username',
+          message: 'If you believe that you should have access, reach out to the current webmaster!',
+          color: "rgba(0, 0, 0, 1)",
+          withBorder: true
+        })
+    setParams({})
+    count.current = 1
+  }}, [params, count] )
+  
+  console.log(params)
 
   return (
     <div
@@ -427,6 +526,7 @@ export default function Public() {
       }}
     >
       <MantineProvider theme={{ variantColorResolver }}>
+        <Notifications/>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
           <Stack style={{ flex: 1, minHeight: 0 }}>
             <div
@@ -440,7 +540,7 @@ export default function Public() {
                 gap: "50px",
               }}
             >
-              <img src={sns_logo} alt="logo" width="150"></img>
+              <a href="https://www.snstheatre.org"> <img src={sns_logo} alt="logo" width="150"></img> </a>
 
               <div>
                 <h2 style={{ color: "black", fontSize: "32px" }}>
@@ -474,7 +574,7 @@ export default function Public() {
                 gap: "30px",
               }}
             >
-              {Table}
+            <Inventory admin={false} />
             </div>
           </Stack>
           <FooterSimple></FooterSimple>
