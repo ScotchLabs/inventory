@@ -16,8 +16,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { client } from "../api/client";
 import { Inventory, variantColorResolver } from "./Public";
 import { AddUpdateItem } from "./AddItem";
+import sns_logo from "../assets/sns_logo.png";
 import classes from "./FooterSimple.module.css";
-import { Header } from "../components/Header";
 
 function EnsureLogin() {
   const { data: session } = client.useSuspenseQuery(
@@ -43,8 +43,7 @@ export function AdminProvider() {
 }
 
 const links = [
-  { link: "mailto:snstheatre.tc@gmail.com?subject=SNS%20Inventory%20Item%20Request",
-    label: "Rent Item (via email)", },
+  { link: "https://www.snstheatre.org/", label: "Scotch'n'Soda Home" },
 ];
 
 export function FooterSimple() {
@@ -72,7 +71,7 @@ function Logout() {
     window.location.href = `${API_URL}/users/auth/logout`;
   };
   return (
-    <Button variant="filled" color="#000" size="xs" onClick={handleLogout}>
+    <Button variant="default" color="rgba(0, 0, 0, 1)" onClick={handleLogout}>
       Logout
     </Button>
   );
@@ -157,7 +156,7 @@ function AddItemPopup() {
         />
       </Modal>
 
-      <Button variant="filled" color="#000" size="xs" onClick={open}>
+      <Button variant="default" color="rgba(0, 0, 0, 1)" onClick={open}>
         Add New Item
       </Button>
     </>
@@ -177,19 +176,20 @@ export function InventoryTable() {
               width: "90%",
               marginRight: "auto",
               marginLeft: "auto",
-              marginTop: "40px",
+              marginTop: "30px",
               gap: "50px",
-              paddingBottom: "17px",
             }}
           >
+            <a href="https://www.snstheatre.org"> <img src={sns_logo} alt="logo" width="150"></img> </a>
+
             <div>
-              <h2 style={{ color: "#000", fontSize: "1.5em", fontWeight: "400", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0" }}>
+              <h2 style={{ color: "black", fontSize: "32px" }}>
                 {" "}
                 Scotch'n'Soda Shop Inventory
               </h2>
             </div>
 
-            <div style={{ marginLeft: "auto", marginRight: "30px" }}>
+            <div style={{ marginLeft: "auto" }}>
               <div
                 style={{
                   display: "flex",
@@ -200,6 +200,16 @@ export function InventoryTable() {
                 <Logout></Logout>
                 <AddItemPopup></AddItemPopup>
               </div>
+              <p
+                style={{
+                  fontSize: "14px",
+                  maxWidth: "300px",
+                  marginTop: "10px",
+                  minWidth: 0,
+                }}
+              >
+                Edit/delete existing items using the "interact" column
+              </p>
             </div>
           </div>
 
@@ -208,7 +218,7 @@ export function InventoryTable() {
               display: "flex",
               justifyContent: "center",
               width: "100%",
-              marginTop: "20px",
+              marginTop: "30px",
               gap: "30px",
             }}
           >
@@ -231,7 +241,6 @@ export function AdminPage() {
         height: "100vh",
       }}
     >
-      <Header />
       <InventoryTable></InventoryTable>
     </div>
   );

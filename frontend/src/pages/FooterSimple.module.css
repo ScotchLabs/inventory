@@ -1,7 +1,6 @@
 .footer {
   border-top: 1.5px solid
     light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
-  background: #E8EEF4;
 }
 
 .inner {

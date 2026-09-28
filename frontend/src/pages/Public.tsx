@@ -27,6 +27,7 @@ import {
 import { IconSearch, IconEdit, IconTrash } from "@tabler/icons-react";
 import classes from "./FooterSimple.module.css";
 import "./Public.css";
+import sns_logo from "../assets/sns_logo.png";
 import { useDebouncedValue } from "@mantine/hooks";
 import { AddUpdateItem, MultiSelectWithObjects, type AddUpdateItemFormValues
  } from "./AddItem";
@@ -35,7 +36,6 @@ import {
   SatisImageEmbedModalButton,
 } from "../components/Files";
 import { useSearchParams } from "react-router";
-import { Header } from "../components/Header";
 
 export function Inventory({admin} : {admin: boolean} ) {
   const [search, setSearch] = useState("");
@@ -83,7 +83,7 @@ export function Inventory({admin} : {admin: boolean} ) {
         >
           <Stack>
             <Button
-              color="#000"
+              color="rgba(245, 39, 39, 1)"
               onClick={async () => {
                 try {
                   await handleDelete({ params: { path: { id } } });
@@ -101,7 +101,7 @@ export function Inventory({admin} : {admin: boolean} ) {
         <Button
           variant="default"
           radius="lg"
-          color="#000"
+          color="rgba(0, 0, 0, 1)"
           size="compact-xs"
           p={3}
           leftSection={<IconTrash size={16} />}
@@ -204,7 +204,7 @@ export function Inventory({admin} : {admin: boolean} ) {
         <Button
           variant="default"
           radius="lg"
-          color="#000"
+          color="rgba(0, 0, 0, 1)"
           size="compact-xs"
           p={3}
           leftSection={<IconEdit size={16} />}
@@ -405,23 +405,21 @@ export function Inventory({admin} : {admin: boolean} ) {
   return (
     <div style={{ display: "flex", justifyContent: "center", width: "100%", flex: 1, minHeight: 0 }}>
       <div style={{ width: "90%", marginLeft: "5%", marginRight: "5%", display: "flex", flexDirection: "column", minHeight: 0 }}>
-        <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", marginBottom: "12px", width: "100%" }}>
-          <div style={{ flex: "0 0 50%", minWidth: "0" }}>
-            <TextInput
-              placeholder="Search by any field"
-              leftSection={<IconSearch size={16} stroke={1.5} />}
-              onChange={(event) => setSearch(event.currentTarget.value)}
-              style={{ width: "100%" }}
-              size="xs"
-            />
-          </div>
-          <div style={{ flex: "0 1 48%", display: "flex", gap: "12px", alignItems: "flex-start", minWidth: "0" }}>
-            <div style={{ flex: "1 1 0", minWidth: "0" }}><LocationFilter /></div>
-            <div style={{ flex: "1 1 0", minWidth: "0" }}><CategoryFilter /></div>
-            <div style={{ flex: "1 1 0", minWidth: "0" }}><SubcategoryFilter /></div>
+        <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", marginBottom: "12px", overflow: "visible", flexWrap: "wrap" }}>
+          <TextInput
+            placeholder="Search by any field"
+            leftSection={<IconSearch size={16} stroke={1.5} />}
+            onChange={(event) => setSearch(event.currentTarget.value)}
+            style={{ flex: "1 1 500px", minWidth: "300px" }}
+            size="xs"
+          />
+          <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", overflow: "visible" }}>
+            <div style={{ width: "190px", height: "36px", display: "flex", alignItems: "center", overflow: "visible", flexShrink: 0 }}><LocationFilter /></div>
+            <div style={{ width: "190px", height: "36px", display: "flex", alignItems: "center", overflow: "visible", flexShrink: 0 }}><CategoryFilter /></div>
+            <div style={{ width: "190px", height: "36px", display: "flex", alignItems: "center", overflow: "visible", flexShrink: 0 }}><SubcategoryFilter /></div>
           </div>
         </div>
-        <Table.ScrollContainer minWidth={500} style={{ flex: 1 }} maxHeight="calc(100vh - 380px)">
+        <Table.ScrollContainer minWidth={500} style={{ flex: 1 }} maxHeight="calc(100vh - 400px)">
           <Table withTableBorder highlightOnHover stickyHeader>
             <Table.Thead>{headers}</Table.Thead>
             <Table.Tbody style={{ fontSize: "13px" }}>{rows}</Table.Tbody>
@@ -462,8 +460,9 @@ export const variantColorResolver = (input: any) => {
 const links = [
   {
     link: "mailto:snstheatre.tc@gmail.com?subject=SNS%20Inventory%20Item%20Request",
-    label: "Rent Item (via email)",
-  }
+    label: "Rent Item",
+  },
+  { link: "https://www.snstheatre.org/", label: "Scotch'n'Soda Home" },
 ];
 
 export function FooterSimple() {
@@ -493,12 +492,11 @@ function Admin() {
 
   return (
     <Button
-      variant="filled"
-      color="#000"
+      variant="default"
+      color="rgba(0, 0, 0, 1)"
       onClick={handleGoogleLogin}
-      size = "xs"
     >
-      Admin Login
+      Sign in with Google
     </Button>
   );
 }
@@ -510,7 +508,7 @@ export default function Public() {
     notifications.show({
           title: 'Unauthorized username',
           message: 'If you believe that you should have access, reach out to the current webmaster!',
-          color: "#9b009c",
+          color: "rgba(0, 0, 0, 1)",
           withBorder: true
         })
     setParams({})
@@ -529,7 +527,6 @@ export default function Public() {
       }}
     >
       <MantineProvider theme={{ variantColorResolver }}>
-        <Header />
         <Notifications/>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
           <Stack style={{ flex: 1, minHeight: 0 }}>
@@ -540,20 +537,32 @@ export default function Public() {
                 width: "90%",
                 marginRight: "auto",
                 marginLeft: "auto",
-                marginTop: "40px",
+                marginTop: "30px",
                 gap: "50px",
-                paddingBottom: "17px",
               }}
             >
+              <a href="https://www.snstheatre.org"> <img src={sns_logo} alt="logo" width="150"></img> </a>
+
               <div>
-                <h2 style={{ color: "#000", fontSize: "1.5em", fontWeight: "400", letterSpacing: "0.1em", textTransform: "uppercase", margin: "0" }}>
+                <h2 style={{ color: "black", fontSize: "32px" }}>
                   {" "}
                   Scotch'n'Soda Shop Inventory
                 </h2>
               </div>
 
-              <div style={{ marginLeft: "auto", marginRight: "30px" }}>
+              <div style={{ marginLeft: "auto" }}>
                 <Admin></Admin>
+                <p
+                  style={{
+                    fontSize: "12px",
+                    maxWidth: "300px",
+                    marginTop: "10px",
+                    minWidth: 0,
+                  }}
+                >
+                  If you are a TAH looking to add or remove an item, please log
+                  in as admin.
+                </p>
               </div>
             </div>
 
@@ -562,7 +571,7 @@ export default function Public() {
                 display: "flex",
                 justifyContent: "center",
                 width: "100%",
-                marginTop: "20px",
+                marginTop: "30px",
                 gap: "30px",
               }}
             >
