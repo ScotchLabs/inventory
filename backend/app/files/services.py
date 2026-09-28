@@ -99,10 +99,10 @@ def handle_file_upload(
 
     return file
 
+
 def file_to_dump_schema(file: File) -> FileDumpSchema:
     return FileDumpSchema(
-                id=file.id,
-                url=file.url,
-                filename=file.filename,
-            )
-
+        id=file.id,
+        url=file.url,
+        filename=file.filename,
+    )

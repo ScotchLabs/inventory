@@ -46,8 +46,9 @@ async def callback(request: Request):
         user_info = token.get("userinfo")
         email = user_info["email"]
 
-
-        unauthorized_response = RedirectResponse(url=f"{sns_environment.web_root_url}?status=unauthorized")
+        unauthorized_response = RedirectResponse(
+            url=f"{sns_environment.web_root_url}?status=unauthorized"
+        )
         # Check if email is in admin allowlist
         if email not in ADMIN_EMAILS:
             return unauthorized_response
@@ -80,9 +81,9 @@ async def callback(request: Request):
 @public_route
 async def login(request: Request):
     try:
-            return await oauth.google.authorize_redirect(
-                request, f"{sns_environment.api_root_url}/users/auth/google/callback"
-            )
+        return await oauth.google.authorize_redirect(
+            request, f"{sns_environment.api_root_url}/users/auth/google/callback"
+        )
     except Exception as e:
         e.with_traceback(None)
         logger.exception(e)
@@ -101,5 +102,3 @@ async def logout(request: Request):
     )
 
     return response
-
-

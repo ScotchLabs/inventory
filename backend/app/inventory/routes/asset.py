@@ -80,7 +80,7 @@ def asset_to_dump_schema(asset: Asset) -> AssetDumpSchema:
         last_updated=asset.last_updated,
         last_updated_by_email=user_email,
         notes=asset.notes,
-        file=file_to_dump_schema(file) if file is not None else None
+        file=file_to_dump_schema(file) if file is not None else None,
     )
 
 
@@ -96,7 +96,9 @@ def list_assets(body: AssetSearchParems) -> ListResponseSchema[AssetDumpSchema]:
                 Asset.name_verbose.ilike(f"%{body.search}%"),
                 Asset.current_location.ilike(f"%{body.search}%"),
                 Asset.notes.ilike(f"%{body.search}%"),
-                func.to_char(Asset.last_updated, 'Month DD, YYYY').ilike(f"%{body.search}%"),  
+                func.to_char(Asset.last_updated, "Month DD, YYYY").ilike(
+                    f"%{body.search}%"
+                ),
                 select(Category.id)
                 .select_from(AssetCategoryMap)
                 .join(Category, Category.id == AssetCategoryMap.category_id)
@@ -129,13 +131,22 @@ def list_assets(body: AssetSearchParems) -> ListResponseSchema[AssetDumpSchema]:
         query = query.where(Asset.permanent_location_id == body.permanent_location_id)
 
     if body.categories:
-        category_subquery = (select(AssetCategoryMap.id).where(AssetCategoryMap.category_id.in_(body.categories), AssetCategoryMap.asset_id == Asset.id)).correlate(Asset)
+        category_subquery = (
+            select(AssetCategoryMap.id).where(
+                AssetCategoryMap.category_id.in_(body.categories),
+                AssetCategoryMap.asset_id == Asset.id,
+            )
+        ).correlate(Asset)
         query = query.where(category_subquery.exists())
 
     if body.sub_categories:
-        category_subquery = (select(AssetCategoryMap.id).where(AssetCategoryMap.category_id.in_(body.sub_categories), AssetCategoryMap.asset_id == Asset.id)).correlate(Asset)
+        category_subquery = (
+            select(AssetCategoryMap.id).where(
+                AssetCategoryMap.category_id.in_(body.sub_categories),
+                AssetCategoryMap.asset_id == Asset.id,
+            )
+        ).correlate(Asset)
         query = query.where(category_subquery.exists())
-
 
     assets = db.execute(query).scalars().all()
     return ListResponseSchema(

@@ -10,6 +10,7 @@ def public_route[T: Callable](func: T) -> T:
     func.__is_public__ = True  # ty:ignore[unresolved-attribute]
     return func
 
+
 class SatisAPIRoute(APIRoute):
     def __init__(
         self, path: str, endpoint: Callable[..., Any], *args: Any, **kwargs: Any
@@ -22,6 +23,7 @@ class SatisAPIRoute(APIRoute):
             kwargs["dependencies"] = dependencies
 
         super().__init__(path, endpoint, *args, **kwargs)
+
 
 class SatisAPIRouter(APIRouter):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
