@@ -13,7 +13,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { client } from "../api/client";
 import { Inventory, variantColorResolver } from "./Public";
 import { AddUpdateItem } from "./AddItem";
-import sns_logo from "../assets/sns_logo.png";
 
 function EnsureLogin() {
   const { data: session } = client.useSuspenseQuery(
@@ -140,17 +139,17 @@ export function InventoryTable() {
   return (
     <MantineProvider theme={{ variantColorResolver }}>
       <header id="header">
-        <h1 id="logo"><a href="/">Scotch'n'Soda Theatre</a></h1>
+        <h1 id="logo"><a href="https://www.snstheatre.org">Scotch'n'Soda Theatre</a></h1>
         <nav id="nav">
           <ul>
-            <li><a href="https://www.snstheatre.org/index.html">Home</a></li>
-            <li><a href="https://www.snstheatre.org/about.html">About</a></li>
-            <li><a href="https://www.snstheatre.org/getinvolved.html">Get Involved</a></li>
-            <li><a href="https://www.snstheatre.org/season.html">Season</a></li>
-            <li><a href="https://www.snstheatre.org/all_galleries.html">Photos</a></li>
+            <li><a href="https://www.snstheatre.org/index">Home</a></li>
+            <li><a href="https://www.snstheatre.org/about">About</a></li>
+            <li><a href="https://www.snstheatre.org/getinvolved">Get Involved</a></li>
+            <li><a href="https://www.snstheatre.org/season">Season</a></li>
+            <li><a href="https://www.snstheatre.org/all_galleries">Photos</a></li>
             <li className="current"><a href="https://inventory.snstheatre.org/">Shop Inventory</a></li>
-            <li><a href="https://www.snstheatre.org/give.html">Give</a></li>
-            <li><a href="https://www.snstheatre.org/contact.html">Contact</a></li>
+            <li><a href="https://www.snstheatre.org/give">Give</a></li>
+            <li><a href="https://www.snstheatre.org/contact">Contact</a></li>
           </ul>
         </nav>
       </header>
