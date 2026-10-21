@@ -1,9 +1,6 @@
 import {
   Skeleton,
   Stack,
-  Group,
-  Container,
-  Anchor,
   Button,
   Modal,
   MantineProvider,
@@ -17,7 +14,6 @@ import { client } from "../api/client";
 import { Inventory, variantColorResolver } from "./Public";
 import { AddUpdateItem } from "./AddItem";
 import sns_logo from "../assets/sns_logo.png";
-import classes from "./FooterSimple.module.css";
 
 function EnsureLogin() {
   const { data: session } = client.useSuspenseQuery(
@@ -39,30 +35,6 @@ export function AdminProvider() {
       <EnsureLogin />
       <Outlet />
     </Suspense>
-  );
-}
-
-const links = [
-  { link: "https://www.snstheatre.org/", label: "Scotch'n'Soda Home" },
-];
-
-export function FooterSimple() {
-  const items = links.map((link) => (
-    <Anchor<"a"> c="dimmed" key={link.label} href={link.link} size="sm">
-      {link.label}
-    </Anchor>
-  ));
-
-  return (
-    <footer className={classes.footer}>
-      <Container className={classes.inner}>
-        <p style={{ fontSize: "12px" }}>
-          {" "}
-          To report bugs reach out to current webmaster
-        </p>
-        <Group className={classes.links}>{items}</Group>
-      </Container>
-    </footer>
   );
 }
 
@@ -167,8 +139,23 @@ export function InventoryTable() {
 
   return (
     <MantineProvider theme={{ variantColorResolver }}>
+      <header id="header">
+        <h1 id="logo"><a href="/">Scotch'n'Soda Theatre</a></h1>
+        <nav id="nav">
+          <ul>
+            <li><a href="https://www.snstheatre.org/index.html">Home</a></li>
+            <li><a href="https://www.snstheatre.org/about.html">About</a></li>
+            <li><a href="https://www.snstheatre.org/getinvolved.html">Get Involved</a></li>
+            <li><a href="https://www.snstheatre.org/season.html">Season</a></li>
+            <li><a href="https://www.snstheatre.org/all_galleries.html">Photos</a></li>
+            <li className="current"><a href="https://inventory.snstheatre.org/">Shop Inventory</a></li>
+            <li><a href="https://www.snstheatre.org/give.html">Give</a></li>
+            <li><a href="https://www.snstheatre.org/contact.html">Contact</a></li>
+          </ul>
+        </nav>
+      </header>
       <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
-        <Stack style={{ flex: 1, minHeight: 0 }}>
+        <Stack style={{ flex: 1 }}>
           <div
             style={{
               display: "flex",
@@ -180,12 +167,10 @@ export function InventoryTable() {
               gap: "50px",
             }}
           >
-            <a href="https://www.snstheatre.org"> <img src={sns_logo} alt="logo" width="150"></img> </a>
-
             <div>
               <h2 style={{ color: "black", fontSize: "32px" }}>
                 {" "}
-                Scotch'n'Soda Shop Inventory
+                Shop Inventory
               </h2>
             </div>
 
@@ -218,14 +203,54 @@ export function InventoryTable() {
               display: "flex",
               justifyContent: "center",
               width: "100%",
-              marginTop: "30px",
+              marginTop: "0px",
+              marginBottom: "40px",
               gap: "30px",
             }}
           >
           <Inventory admin={true}/>
           </div>
+
+          <footer id="footer">
+          <ul className="icons">
+            <li>
+              <a
+                href="https://www.facebook.com/snstheatre/"
+                className="icon circle fab fa-facebook-f"
+                target="_blank"
+                ><span className="label">Facebook</span></a>
+            </li>
+            <li>
+              <a
+                href="https://www.instagram.com/scotchnsodatheatre"
+                className="icon circle fab fa-instagram"
+                target="_blank"
+                ><span className="label">Instagram</span></a>
+            </li>
+            <li>
+              <a
+                href="https://www.twitter.com/snstheatre"
+                className="icon circle fab fa-twitter"
+                target="_blank"><span className="label">Twitter</span></a>
+            </li>
+            <li>
+              <a
+                href="https://www.youtube.com/channel/UCYRoT4XEPocbe-3GNEutgIA"
+                className="icon circle fab fa-youtube"
+                target="_blank"><span className="label">YouTube</span></a
+              >
+            </li>
+          </ul>
+
+          <ul className="copyright">
+            <li>&copy; Scotch'n'Soda Theatre</li>
+            <li>Pittsburgh, PA</li>
+            <li>
+              Design: <a href="http://html5up.net" target="_blank">HTML5 UP</a>
+            </li>
+          </ul>
+        </footer>
         </Stack>
-        <FooterSimple></FooterSimple>
       </div>
     </MantineProvider>
   );
@@ -238,7 +263,10 @@ export function AdminPage() {
         display: "flex",
         flexDirection: "column",
         minHeight: "100vh",
-        height: "100vh",
+        backgroundImage: "url(/images/dark-tl.svg), url(/images/dark-tr.svg), url(/images/dark-bl.svg), url(/images/dark-br.svg)",
+        backgroundPosition: "top left, top right, bottom left, bottom right",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "25em",
       }}
     >
       <InventoryTable></InventoryTable>

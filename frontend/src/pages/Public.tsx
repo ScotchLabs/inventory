@@ -12,9 +12,6 @@ import {
   Table,
   Stack,
   Button,
-  Anchor,
-  Container,
-  Group,
   TextInput,
   defaultVariantColorsResolver,
   MantineProvider,
@@ -25,9 +22,8 @@ import {
   Select,
 } from "@mantine/core";
 import { IconSearch, IconEdit, IconTrash } from "@tabler/icons-react";
-import classes from "./FooterSimple.module.css";
 import "./Public.css";
-import sns_logo from "../assets/sns_logo.png";
+import "./main.css"
 import { useDebouncedValue } from "@mantine/hooks";
 import { AddUpdateItem, MultiSelectWithObjects, type AddUpdateItemFormValues
  } from "./AddItem";
@@ -313,7 +309,7 @@ export function Inventory({admin} : {admin: boolean} ) {
 
     return (
           <Select
-            size="xs"
+            size="sm"
             placeholder="Filter Location"
             value={selectedLocation}
             data={(perm_locations?.locations ?? []).map((loc) => ({
@@ -343,7 +339,7 @@ export function Inventory({admin} : {admin: boolean} ) {
                     onFocus={() => {}}
                     onBlur={() => {}}
                     placeholder="Filter Category"
-                    size="xs"
+                    size="sm"
           />
       );
   }
@@ -364,54 +360,56 @@ export function Inventory({admin} : {admin: boolean} ) {
                     onFocus={() => {}}
                     onBlur={() => {}}
                     placeholder="Filter Subcategory"
-                    size="xs"
+                    size="sm"
           />
       );
   }  
 
 
 
+  const headerCellStyle = { fontWeight: 700 };
+
   const headers = admin ? (
     <Table.Tr>
-      <Table.Th>Interact</Table.Th>
-      <Table.Th>Item</Table.Th>
-      <Table.Th>Description</Table.Th>
-      <Table.Th>Count</Table.Th>
-      <Table.Th>Categories</Table.Th>
-      <Table.Th>Sub-Categories</Table.Th>
-      <Table.Th>Current Location</Table.Th>
-      <Table.Th>Permanent Home</Table.Th>
-      <Table.Th>Last Updated</Table.Th>
-      <Table.Th>Updated By</Table.Th>
-      <Table.Th>Notes</Table.Th>
-      <Table.Th>Photo</Table.Th>
+      <Table.Th style={headerCellStyle}>Interact</Table.Th>
+      <Table.Th style={headerCellStyle}>Item</Table.Th>
+      <Table.Th style={headerCellStyle}>Description</Table.Th>
+      <Table.Th style={headerCellStyle}>Count</Table.Th>
+      <Table.Th style={headerCellStyle}>Categories</Table.Th>
+      <Table.Th style={headerCellStyle}>Sub-Categories</Table.Th>
+      <Table.Th style={headerCellStyle}>Current Location</Table.Th>
+      <Table.Th style={headerCellStyle}>Permanent Home</Table.Th>
+      <Table.Th style={headerCellStyle}>Last Updated</Table.Th>
+      <Table.Th style={headerCellStyle}>Updated By</Table.Th>
+      <Table.Th style={headerCellStyle}>Notes</Table.Th>
+      <Table.Th style={headerCellStyle}>Photo</Table.Th>
     </Table.Tr>
   ) : (
     <Table.Tr>
-      <Table.Th>Item</Table.Th>
-      <Table.Th>Description</Table.Th>
-      <Table.Th>Count</Table.Th>
-      <Table.Th>Categories</Table.Th>
-      <Table.Th>Sub-Categories</Table.Th>
-      <Table.Th>Current Location</Table.Th>
-      <Table.Th>Permanent Home</Table.Th>
-      <Table.Th>Last Updated</Table.Th>
-      <Table.Th>Updated By</Table.Th>
-      <Table.Th>Notes</Table.Th>
-      <Table.Th>Photo</Table.Th>
+      <Table.Th style={headerCellStyle}>Item</Table.Th>
+      <Table.Th style={headerCellStyle}>Description</Table.Th>
+      <Table.Th style={headerCellStyle}>Count</Table.Th>
+      <Table.Th style={headerCellStyle}>Categories</Table.Th>
+      <Table.Th style={headerCellStyle}>Sub-Categories</Table.Th>
+      <Table.Th style={headerCellStyle}>Current Location</Table.Th>
+      <Table.Th style={headerCellStyle}>Permanent Home</Table.Th>
+      <Table.Th style={headerCellStyle}>Last Updated</Table.Th>
+      <Table.Th style={headerCellStyle}>Updated By</Table.Th>
+      <Table.Th style={headerCellStyle}>Notes</Table.Th>
+      <Table.Th style={headerCellStyle}>Photo</Table.Th>
     </Table.Tr>
   );
 
   return (
     <div style={{ display: "flex", justifyContent: "center", width: "100%", flex: 1, minHeight: 0 }}>
       <div style={{ width: "90%", marginLeft: "5%", marginRight: "5%", display: "flex", flexDirection: "column", minHeight: 0 }}>
-        <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", marginBottom: "12px", overflow: "visible", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", marginBottom: "12px", marginRight: "15px", overflow: "visible", flexWrap: "wrap" }}>
           <TextInput
             placeholder="Search by any field"
             leftSection={<IconSearch size={16} stroke={1.5} />}
             onChange={(event) => setSearch(event.currentTarget.value)}
             style={{ flex: "1 1 500px", minWidth: "300px" }}
-            size="xs"
+            size="sm"
           />
           <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", overflow: "visible" }}>
             <div style={{ width: "190px", height: "36px", display: "flex", alignItems: "center", overflow: "visible", flexShrink: 0 }}><LocationFilter /></div>
@@ -420,7 +418,7 @@ export function Inventory({admin} : {admin: boolean} ) {
           </div>
         </div>
         <Table.ScrollContainer minWidth={500} style={{ flex: 1 }} maxHeight="calc(100vh - 400px)">
-          <Table withTableBorder highlightOnHover stickyHeader>
+          <Table withTableBorder highlightOnHover stickyHeader style={{ background: "#fff" }}>
             <Table.Thead>{headers}</Table.Thead>
             <Table.Tbody style={{ fontSize: "13px" }}>{rows}</Table.Tbody>
           </Table>
@@ -456,34 +454,6 @@ export const variantColorResolver = (input: any) => {
 
   return defaultResolvedColors;
 };
-
-const links = [
-  {
-    link: "mailto:snstheatre.tc@gmail.com?subject=SNS%20Inventory%20Item%20Request",
-    label: "Rent Item",
-  },
-  { link: "https://www.snstheatre.org/", label: "Scotch'n'Soda Home" },
-];
-
-export function FooterSimple() {
-  const items = links.map((link) => (
-    <Anchor<"a"> c="dimmed" key={link.label} href={link.link} size="sm">
-      {link.label}
-    </Anchor>
-  ));
-
-  return (
-    <footer className={classes.footer}>
-      <Container className={classes.inner}>
-        <p style={{ fontSize: "12px" }}>
-          {" "}
-          To report bugs reach out to current webmaster
-        </p>
-        <Group className={classes.links}>{items}</Group>
-      </Container>
-    </footer>
-  );
-}
 
 function Admin() {
   const handleGoogleLogin = () => {
@@ -523,13 +493,33 @@ export default function Public() {
         display: "flex",
         flexDirection: "column",
         minHeight: "100vh",
-        height: "100vh",
+        backgroundImage: "url(/images/dark-tl.svg), url(/images/dark-tr.svg), url(/images/dark-bl.svg), url(/images/dark-br.svg)",
+        backgroundPosition: "top left, top right, bottom left, bottom right",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "25em",
       }}
     >
       <MantineProvider theme={{ variantColorResolver }}>
         <Notifications/>
+        
+        <header id="header">
+          <h1 id="logo"><a href="/">Scotch'n'Soda Theatre</a></h1>
+            <nav id="nav">
+              <ul>
+                  <li><a href="https://www.snstheatre.org/index.html">Home</a></li>
+                  <li><a href="https://www.snstheatre.org/about.html">About</a></li>
+                  <li><a href="https://www.snstheatre.org/getinvolved.html">Get Involved</a></li>
+                  <li><a href="https://www.snstheatre.org/season.html">Season</a></li>
+                  <li><a href="https://www.snstheatre.org/all_galleries.html">Photos</a></li>
+                  <li className="current"><a href="https://inventory.snstheatre.org/">Shop Inventory</a></li>
+                  <li><a href="https://www.snstheatre.org/give.html">Give</a></li>
+                  <li><a href="https://www.snstheatre.org/contact.html">Contact</a></li>
+              </ul>
+            </nav>
+        </header>
+
         <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
-          <Stack style={{ flex: 1, minHeight: 0 }}>
+          <Stack style={{ flex: 1 }}>
             <div
               style={{
                 display: "flex",
@@ -541,12 +531,11 @@ export default function Public() {
                 gap: "50px",
               }}
             >
-              <a href="https://www.snstheatre.org"> <img src={sns_logo} alt="logo" width="150"></img> </a>
 
               <div>
                 <h2 style={{ color: "black", fontSize: "32px" }}>
                   {" "}
-                  Scotch'n'Soda Shop Inventory
+                  Shop Inventory
                 </h2>
               </div>
 
@@ -571,14 +560,56 @@ export default function Public() {
                 display: "flex",
                 justifyContent: "center",
                 width: "100%",
-                marginTop: "30px",
+                marginTop: "0px",
+                marginBottom: "40px",
                 gap: "30px",
               }}
             >
             <Inventory admin={false} />
             </div>
+            <p>Looking to borrow an item? Reach out <a href="mailto:snstheatre.tc@gmail.com?subject=SNS%20Inventory%20Item%20Request">here</a>!</p>
+            <p>To report bugs, reach out to the current webmaster.</p>
+
           </Stack>
-          <FooterSimple></FooterSimple>
+          <footer id="footer">
+          <ul className="icons">
+            <li>
+              <a
+                href="https://www.facebook.com/snstheatre/"
+                className="icon circle fab fa-facebook-f"
+                target="_blank"
+                ><span className="label">Facebook</span></a>
+            </li>
+            <li>
+              <a
+                href="https://www.instagram.com/scotchnsodatheatre"
+                className="icon circle fab fa-instagram"
+                target="_blank"
+                ><span className="label">Instagram</span></a>
+            </li>
+            <li>
+              <a
+                href="https://www.twitter.com/snstheatre"
+                className="icon circle fab fa-twitter"
+                target="_blank"><span className="label">Twitter</span></a>
+            </li>
+            <li>
+              <a
+                href="https://www.youtube.com/channel/UCYRoT4XEPocbe-3GNEutgIA"
+                className="icon circle fab fa-youtube"
+                target="_blank"><span className="label">YouTube</span></a
+              >
+            </li>
+          </ul>
+
+          <ul className="copyright">
+            <li>&copy; Scotch'n'Soda Theatre</li>
+            <li>Pittsburgh, PA</li>
+            <li>
+              Design: <a href="http://html5up.net" target="_blank">HTML5 UP</a>
+            </li>
+          </ul>
+        </footer>
         </div>
       </MantineProvider>
     </div>
