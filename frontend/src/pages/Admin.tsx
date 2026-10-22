@@ -142,7 +142,7 @@ export function InventoryTable() {
         <h1 id="logo"><a href="https://www.snstheatre.org">Scotch'n'Soda Theatre</a></h1>
         <nav id="nav">
           <ul>
-            <li><a href="https://www.snstheatre.org/index">Home</a></li>
+            <li><a href="https://www.snstheatre.org">Home</a></li>
             <li><a href="https://www.snstheatre.org/about">About</a></li>
             <li><a href="https://www.snstheatre.org/getinvolved">Get Involved</a></li>
             <li><a href="https://www.snstheatre.org/season">Season</a></li>
