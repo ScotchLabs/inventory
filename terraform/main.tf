@@ -14,7 +14,7 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region  = var.aws_region
   profile = "terraform"
 }
 
@@ -32,6 +32,12 @@ variable "instance_type" {
   description = "EC2 instance type. t3.medium = 2 vCPU / 4GB RAM"
   type        = string
   default     = "t3.medium"
+}
+
+variable "ami_id" {
+  description = "AMI for the app instance. Pinned so a newer AL2023 image doesn't force the server to be replaced; change it deliberately."
+  type        = string
+  default     = "ami-0ac62d2d72afdce51" # the AMI the running instance was built from
 }
 
 variable "root_volume_size_gb" {
@@ -290,12 +296,12 @@ resource "aws_secretsmanager_secret" "app_secrets" {
 resource "aws_secretsmanager_secret_version" "app_secrets" {
   secret_id = aws_secretsmanager_secret.app_secrets.id
   secret_string = jsonencode({
-    google_oauth_client_id    = var.google_oauth_client_id
+    google_oauth_client_id     = var.google_oauth_client_id
     google_oauth_client_secret = var.google_oauth_client_secret
-    web_root_url              = var.web_root_url
-    api_root_url              = var.api_root_url
-    fastapi_session_secret    = var.fastapi_session_secret
-    domain_name               = var.domain_name
+    web_root_url               = var.web_root_url
+    api_root_url               = var.api_root_url
+    fastapi_session_secret     = var.fastapi_session_secret
+    domain_name                = var.domain_name
   })
 }
 
@@ -303,26 +309,12 @@ resource "aws_secretsmanager_secret_version" "app_secrets" {
 # AMI - latest Amazon Linux 2023
 ##############################################
 
-data "aws_ami" "al2023" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-*-x86_64"]
-  }
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
 ##############################################
 # EC2 Instance
 ##############################################
 
 resource "aws_instance" "app" {
-  ami                    = data.aws_ami.al2023.id
+  ami                    = var.ami_id
   instance_type          = var.instance_type
   subnet_id              = data.aws_subnet.selected.id
   key_name               = var.key_pair_name
@@ -395,4 +387,187 @@ output "efs_id" {
 
 output "ssh_command" {
   value = "ssh -i <your-key>.pem ec2-user@${aws_instance.app.public_ip}"
+}
+
+
+##############################################
+# Static site variables and provider
+##############################################
+
+variable "static_bucket_name" {
+  description = "S3 bucket name for the static site (photos)"
+  type        = string
+  default     = "sns-photos-static"
+}
+
+variable "static_domain_name" {
+  description = "Public hostname for the static site, served by CloudFront"
+  type        = string
+  default     = "static.snstheatre.org"
+}
+
+# CloudFront only accepts ACM certificates from us-east-1.
+provider "aws" {
+  alias   = "us_east_1"
+  region  = "us-east-1"
+  profile = "terraform"
+}
+
+##############################################
+# ----- Static files for snstheatre.org (photos) -----
+# Static files for snstheatre.org: S3 bucket behind CloudFront at static.snstheatre.org
+# Photos live under images/<gallery-slug>/<file>.jpg, e.g.
+#   https://static.snstheatre.org/images/2025_alice_by_heart/IMG_0001.jpg
+#
+# The bucket is private; CloudFront reads it through Origin Access Control.
+##############################################
+
+# CloudFront only accepts ACM certificates from us-east-1.
+##############################################
+# Variables
+##############################################
+
+##############################################
+# S3 bucket (private)
+##############################################
+
+resource "aws_s3_bucket" "static" {
+  bucket = var.static_bucket_name
+}
+
+resource "aws_s3_bucket_public_access_block" "static" {
+  bucket                  = aws_s3_bucket.static.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_ownership_controls" "static" {
+  bucket = aws_s3_bucket.static.id
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+resource "aws_s3_bucket_versioning" "static" {
+  bucket = aws_s3_bucket.static.id
+  versioning_configuration {
+    status = "Enabled" # keeps old copies if a photo is overwritten or deleted by mistake
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "static" {
+  bucket = aws_s3_bucket.static.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+# Only CloudFront can read objects, and only through this distribution.
+resource "aws_s3_bucket_policy" "cloudfront_read" {
+  bucket = aws_s3_bucket.static.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid       = "AllowCloudFrontRead"
+      Effect    = "Allow"
+      Principal = { Service = "cloudfront.amazonaws.com" }
+      Action    = "s3:GetObject"
+      Resource  = "${aws_s3_bucket.static.arn}/*"
+      Condition = {
+        StringEquals = { "AWS:SourceArn" = aws_cloudfront_distribution.static.arn }
+      }
+    }]
+  })
+  depends_on = [aws_s3_bucket_public_access_block.static]
+}
+
+##############################################
+# TLS certificate for static.snstheatre.org
+##############################################
+
+resource "aws_acm_certificate" "static" {
+  provider          = aws.us_east_1
+  domain_name       = var.static_domain_name
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Manual step: add this CNAME in whatever DNS hosts snstheatre.org so the certificate validates.
+# The apply will wait until it resolves (see aws_acm_certificate_validation below).
+resource "aws_acm_certificate_validation" "static" {
+  provider        = aws.us_east_1
+  certificate_arn = aws_acm_certificate.static.arn
+}
+
+##############################################
+# CloudFront
+##############################################
+
+resource "aws_cloudfront_origin_access_control" "static" {
+  name                              = "${var.static_bucket_name}-oac"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
+resource "aws_cloudfront_distribution" "static" {
+  enabled             = true
+  is_ipv6_enabled     = true
+  comment             = "snstheatre.org static files (photos)"
+  default_root_object = ""
+  aliases             = [var.static_domain_name]
+  price_class         = "PriceClass_100"
+
+  origin {
+    domain_name              = aws_s3_bucket.static.bucket_regional_domain_name
+    origin_id                = "s3-static"
+    origin_access_control_id = aws_cloudfront_origin_access_control.static.id
+  }
+
+  default_cache_behavior {
+    target_origin_id       = "s3-static"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
+    compress               = true
+
+    # AWS managed "CachingOptimized" policy
+    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6"
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    acm_certificate_arn      = aws_acm_certificate_validation.static.certificate_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
+  }
+}
+
+##############################################
+# Outputs
+##############################################
+
+output "bucket_name" {
+  value = aws_s3_bucket.static.id
+}
+
+output "cloudfront_domain_name" {
+  description = "Add a CNAME for static.snstheatre.org pointing here in the DNS host for snstheatre.org"
+  value       = aws_cloudfront_distribution.static.domain_name
+}
+
+output "image_base_url" {
+  value = "https://${var.static_domain_name}/images"
 }
