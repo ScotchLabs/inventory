@@ -1,3 +1,6 @@
+## To add admin:
+inside `backend/app/users/models/user.py`, add the andrew email to the `ADMIN_EMAILS` constant. Push, then make sure in the ec2 isntance that the user was added successfully. 
+
 ## Getting started:
 Please ensure you have `uv` and `npm` (use `NVM` in install) installed.  
 Run inside backend
